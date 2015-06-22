@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../templates/client/template.xhtml">
+            <ui:define name="body">     
+                <h:form id="IncidentForm">
+                    <p:dataTable id="incidentsTable" var="problem" value="#{problemSolverBean.problemSolvers}" paginator="true" rows="15"
+                                 selectionMode="single" rowKey="#{problem.psId}" selection="#{problemSolverBean.selectedProblemSolver}" emptyMessage="#{msgs.noDataFound}">
+                        <p:ajax event="rowSelect" 
+                                update=":IncidentForm:display" oncomplete="PF('incidentDiag').show()" />
+
+                        <p:column headerText="Date" 
+                                  filterBy="#{problem.dateEntered}"
+                                  sortBy="#{problem.dateEntered}" 
+                                  id="date" 
+                                  filterMatchMode="contains"
+                                  style="width: 185px;">
+                            #{problem.dateEntered}
+                        </p:column>
+                        <p:column headerText="Entered By" 
+                                  id="report_type" 
+                                  filterBy="#{problem.userId}"
+                                  sortBy="#{problem.userId}" 
+                                  filterOptions="#{problemSolverBean.userSelection}"
+                                  filterMatchMode="contains"
+                                  style="width: 220px;">
+                            #{problemSolverBean.getUserById(problem.userId).getFullName()}
+                        </p:column>
+                        <p:column headerText="Images" 
+                                  id="images_type" 
+                                  style="width: 80px;">
+                            <p:panel visible="#{problem.imageCount == 0}">
+                                No Images
+                            </p:panel>
+                            <p:panel visible="#{problem.imageCount != 0}">
+                                #{problem.imageCount} Images
+                            </p:panel>
+                        </p:column>
+                    </p:dataTable>
+                    <p:dialog id="incident_diag" modal="true" widgetVar="incidentDiag" width="700" showEffect="puff" hideEffect="puff" header="Problem Solver">
+                        <p:panelGrid id="display" styleClass="incidentTable">
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="Date: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.psDate}" styleClass="table_cell">
+                                        <f:convertDateTime pattern="EEE, MMM d, yy HH:mm" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <h:outputText value="Communication: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.problem}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.solution != null and problemSolverBean.selectedProblemSolver.solution.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="Solution: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.solution}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.schedulerInst != null and problemSolverBean.selectedProblemSolver.schedulerInst.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="Scheduler Instructions: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.schedulerInst}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.supervisorInst != null and problemSolverBean.selectedProblemSolver.supervisorInst.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="Supervisor Instructions: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.supervisorInst}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.dmInst != null and problemSolverBean.selectedProblemSolver.dmInst.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="DM Instructions: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.dmInst}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.hrInst != null and problemSolverBean.selectedProblemSolver.hrInst.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="HR Instructions: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.hrInst}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.postcomInst != null and problemSolverBean.selectedProblemSolver.postcomInst.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="Post Commander Instructions: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.postcomInst}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                            <p:row rendered="#{problemSolverBean.selectedProblemSolver.officerInst != null and problemSolverBean.selectedProblemSolver.officerInst.length() > 0}">
+                                <p:column>
+                                    <h:outputText value="Officer Instructions: " styleClass="table_cell"/>
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{problemSolverBean.selectedProblemSolver.officerInst}" styleClass="table_cell"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid  >
+                        <p:commandButton value="Close" onclick="PF('odrDiag').hide();" style="float: right;"/>
+                    </p:dialog>
+                </h:form>
+
+
+            </ui:define>
+
+            <ui:define name="inner_right_column">
+                <h:form id="calendarForm">
+                    <h3>View Activity</h3>
+                    <p:calendar mode="inline"
+                                id="selectedDateCal" value="#{problemSolverBean.selectedDate}">
+                        <p:ajax event="dateSelect" listener="#{problemSolverBean.handleDateSelect}" update=":IncidentForm:incidentsTable" />
+                    </p:calendar>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>
+

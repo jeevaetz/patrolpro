@@ -1,0 +1,204 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="ODRDiagForm" enctype="multipart/form-data">
+        <div id="ODRDiagModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+            <div class="modal-dialog" style="width: 50%;">
+                <div jsf:id="odrDiag">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                            <h3 class="modal-title">#{msgs.odrDisplay}</h3>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-bordered" id="table-1">
+                                <tr>
+                                    <td rowspan="4">
+                                        <p:graphicImage width="120" value="#{editODRBean.selectedLogInLogOut.employee.getEmployeeImageUrl(sBean.selectedCompany.compDB)}"></p:graphicImage>
+                                    </td>
+                                    <td>
+                                        #{msgs.officerName}
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{editODRBean.selectedLogInLogOut.employee.fullName}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        #{msgs.loginTime}
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{editODRBean.selectedLogInLogOut.startDate}">
+                                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="#{msgs.longFormatStyle}" />
+                                        </h:outputText>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        #{msgs.logoutTime}
+                                    </td>
+                                    <td>
+                                        <h:outputText value="#{editODRBean.selectedLogInLogOut.endDate}">
+                                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="#{msgs.longFormatStyle}" />
+                                        </h:outputText>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        #{msgs.text}
+                                    </td>
+                                </tr>
+
+                                <ui:repeat value="#{editODRBean.selectedLogInLogOut.texts}" var="reportTexts">
+                                    <tr>
+                                        <td>
+                                            <h:outputText value="#{reportTexts.enteredOn}">
+                                                <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                                            </h:outputText>
+                                        </td>
+                                        <td colspan="2">
+                                            #{reportTexts.text}
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </h:form>
+
+    <h:form id="ODRDiagForm2">
+        <p:dialog id="odrDiag2" modal="true" widgetVar="odrDiag" width="600" height="400">
+            <p:scrollPanel style="height:350px">
+                <p:panelGrid styleClass="incidentTable" id="display" style="width: 580px; height: 100%;">
+                    <p:row>
+                        <p:column style="width: 580px; padding: 0px;">
+                            <p:panelGrid id="displayData" style="width: 580px; padding: 0px; height: 100%;">
+                                <p:row>
+                                    <p:column rowspan="4" style="width: 120px; padding: 0px;">
+                                        <p:graphicImage width="120" value="#{editODRBean.selectedLogInLogOut.employee.getEmployeeImageUrl(sBean.selectedCompany.compDB)}"></p:graphicImage>
+                                    </p:column>
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="Officer Name:" styleClass="table_cell"/>
+                                    </p:column>
+                                    <p:column style="width: 300px; padding: 6px;">
+                                        <h:outputText value="#{editODRBean.selectedLogInLogOut.employee.fullName}" styleClass="table_cell"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="Start Time: " styleClass="table_cell"/>
+                                    </p:column>
+                                    <p:column style="width: 300px; padding: 6px;">
+                                        <h:outputText value="#{editODRBean.selectedLogInLogOut.startDate}" styleClass="table_cell">
+                                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="MMM d, yyyy HHmm" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="End Time: " styleClass="table_cell"/>
+                                    </p:column>                                                
+                                    <p:column style="width: 300px; padding: 6px;">
+                                        <h:outputText value="#{editODRBean.selectedLogInLogOut.endDate}" styleClass="table_cell">
+                                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="MMM d, yyyy HHmm" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="Actions: " styleClass="table_cell"/>
+                                    </p:column>
+                                    <p:column style="width: 300px;  padding: 6px;">
+                                        <a href="#{request.contextPath}/client/printodrservlet?odrReportId=#{editODRBean.selectedLogInLogOut.ODRIds}&amp;companyId=#{sBean.companyId}" target="_blank">
+                                            <p:graphicImage id="printer" url="/images/print.png" onclick=""/>
+                                        </a>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 80px;">
+                                        <h:outputText value="Images: "/>
+                                    </p:column>
+                                    <p:column style="width: 300px; padding: 6px;" colspan="2">
+                                        <ui:repeat value="#{editODRBean.selectedLogInLogOut.texts}" var="reportTexts">
+                                            <ui:repeat value="#{reportTexts.getReportImages(sBean.companyId)}" var="image">
+                                                <a href="#{request.contextPath}/imageServlet?imageId=-#{image.officerDailyReportDocumentId}&amp;companyId=#{sBean.companyId}" target="_blank">
+                                                    <h:graphicImage value="/thumbs/?imageId=-#{image.officerDailyReportDocumentId}&amp;companyId=#{sBean.companyId}"/>
+                                                </a>
+                                            </ui:repeat>
+                                        </ui:repeat>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 80px; vertical-align: top;">
+                                        <h:outputText value="Notes Entered: "/>
+                                    </p:column>
+                                    <p:column style="padding: 6px; width: 480px" colspan="2">
+                                        <ui:repeat value="#{editODRBean.selectedLogInLogOut.texts}" var="reportTexts">
+                                            <p:panelGrid id="noteData" style="width: 470px;">
+                                                <p:row>
+                                                    <p:column style="width: 470px;">
+                                                        <h:outputText value="#{reportTexts.enteredOn}">
+                                                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="MMM d, yyyy HHmm" />
+                                                        </h:outputText>
+                                                        <p:commandLink action="#{editODRBean.editNote(reportTexts)}" onclick="PF('editODRTextDiag').show();" update=":editODRTextForm:odrTextArea">
+                                                            <p:graphicImage value="/client/images/document_edit.png" style="float: right; padding-right: 10px;"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column style="width: 470px;">
+                                                        #{reportTexts.text}
+                                                    </p:column>
+                                                </p:row>
+                                            </p:panelGrid>
+                                        </ui:repeat>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:scrollPanel>
+
+            <c:if test="${editODRBean.selectedODR != null}">
+                <p:dataTable id="odr_text" var="text" style="width: 100%" value="#{editODRBean.selectedODR.reportTexts}" 
+                             selectionMode="single"
+                             selection="#{editODRBean.selectedODRText}"
+                             rowKey="#{text.officerDailyReportTextId}">
+                    <p:column headerText="Entry Time" id="entry_date" style="width: 25%">
+                        <h:outputText value="#{text.dateEntered}" styleClass="table_cell">
+                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="MMM d, yyyy HHmm" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Exit Time" id="exit_date" style="width: 25%">
+                        <h:outputText value="#{text.dateEntered}" styleClass="table_cell">
+                            <f:convertDateTime timeZone="#{sBean.getGMTOffset()}" pattern="MMM d, yyyy HHmm" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Entry Text" id="text_text" style="width: 50%">
+                        <h:outputText value="#{text.text}" styleClass="table_cell"/>
+                    </p:column>
+                </p:dataTable>
+            </c:if>
+            <p:commandButton value="Close" ajax="true" onclick="odrDiag.close();" action="#{editODRBean.clearODR()}" update=":ODRForm:odrTable" style="float: right;"/>
+        </p:dialog>
+    </h:form>
+
+
+    <h:form id="editODRTextForm">
+        <p:dialog id="editODRTextDiag" widgetVar="editODRTextDiag" width="400" height="250">
+            <p:inputTextarea id="odrTextArea" value="#{editODRBean.editingReportText.text}" style="width: 100%;" rows="7"/>
+            <p:commandButton value="Save" ajax="true" action="#{editODRBean.saveReportText}" oncomplete="PF('editODRTextDiag').hide();PF('odrDiag').hide();" style="float: right;" update=":ODRForm:odrTable"/>
+        </p:dialog>
+    </h:form>
+</ui:composition>
+

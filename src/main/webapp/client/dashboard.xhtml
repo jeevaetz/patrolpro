@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../templates/client/template.xhtml">
+            <ui:define name="javascript">
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/select2/select2.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/jquery-icheck/skins/minimal/_all.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-3-timepicker/css/bootstrap-timepicker.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-datepicker/css/datepicker3.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-jasny/dist/css/jasny-bootstrap.css"/>
+            </ui:define>
+            <ui:define name="body">     
+                <h:form id="sendTableForm">
+                    <p:remoteCommand name="clickTable" action="#{dashboardBean.onRowSelect}" update=":ODRDiagForm:odrDiag" oncomplete="$('#ODRDiagModal').modal('show')">
+
+                    </p:remoteCommand>
+                </h:form>
+
+                <h:form id="ODRSearchForm">
+
+                    <div id="accordian-form-search" class="panel-group accordian-simple">
+                        <div class="panel is-open">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#aaccordian-form-search" href="#form-basic-search" aria-expanded="true">
+                                        <i class="fa accordion-caret"></i>
+                                        <i class="fa faq-accordion-caret"></i>
+                                        #{msgs.basic}
+                                    </a>
+                                </h4>
+                            </div>
+                        </div>
+                        <div id="form-basic-search" jsf:rendered="false" class="panel-collapse collapse in" aria-expanded="true">
+                            <div jsf:id="odrSearchPanel" class="well">
+                                <div class="panel-body">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <h6>#{msgs.startDate}</h6>
+                                                <div class="input-group date ui-datepicker" data-date-language="#{clientSessionBean.locale.language}">
+                                                    <input type="text" id="startDate" name="startDate" class="form-control" placeholder="Start Date" value="#{formBean.getFormattedSDate()}"/>
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h6>#{msgs.endDate}</h6>
+                                                <div class="input-group date ui-datepicker" data-date-language="#{clientSessionBean.locale.language}">
+                                                    <input type="text" id="startDate" name="startDate" class="form-control" placeholder="Start Date" value="#{formBean.getFormattedSDate()}"/>
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3" jsf:rendered="#{clientSessionBean.clients.size() > 1}">
+                                                <h6>#{msgs.clients}</h6>
+                                                <select name="clients" class="form-control ui-select">
+                                                    <option value=" ">#{msgs.selectToSearch}</option>
+                                                    <ui:repeat value="#{clientSessionBean.clients}" var="client">
+                                                        <option value="#{client.clientId}">#{client.clientName}</option>
+                                                    </ui:repeat>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3" jsf:rendered="#{dashboardBean.employees.size() > 1}">
+                                                <h6>#{msgs.employees}</h6>
+                                                <select name="employees" class="form-control ui-select">
+                                                    <option value="-1">#{msgs.selectToSearch}</option>
+                                                    <ui:repeat value="#{dashboardBean.employees}" var="employee">
+                                                        <option value="#{employee.employeeId}">#{employee.employeeFullName}</option>
+                                                    </ui:repeat>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.downloadODR}" 
+                                               oncomplete="javascript: window.open('#{facesContext.externalContext.requestContextPath}/GenerateEmployeeFileServlet?companyId=#{clientSessionBean.companyId}&amp;clientIds=#{clientSessionBean.getAccessibleClientsToUrlParam()}&amp;lang=#{clientSessionBean.locale.language}')"/>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+
+                <h:form id="ODRForm" prependId="true">
+                    <p:poll interval="120" update="odrTable" />
+                    <div jsf:id="odrTable">
+                        <table class="table table-striped table-bordered table-highlight" id="table-1" data-pagination="true" data-search="true">
+                            <tr>
+                                <c:if test="#{clientSessionBean.hasMultipleClients()}">
+                                    <th style="width: 180px;">
+                                        <h4>#{msgs.client}</h4>
+                                    </th>
+                                </c:if>
+                                <th style="width: 80px;">
+                                    <h4>#{msgs.login}</h4>
+                                </th>
+                                <th style="width: 80px;">
+                                    <h4>#{msgs.logout}</h4>
+                                </th>
+                                <th style="width: 30%;">
+                                    <h4>#{msgs.device}</h4>
+                                </th>
+                                <th style="width: 30%;">
+                                    <h4>#{msgs.employee}</h4>
+                                </th>
+                                <th style="width: 10%;">
+                                    <h4>#{msgs.actions}</h4>
+                                </th>
+                            </tr>
+                            <ui:repeat value="#{dashboardBean.logInLogOut}" var="logInOut">
+                                <tr class="clickable-row">
+                                    <c:if test="#{clientSessionBean.hasMultipleClients()}">
+                                        <td onclick="javascript:clickTable([{name: 'selectedLogInLogOut', value: '#{logInOut.ODRIds}'}]);">
+                                            #{logInOut.client.clientName}
+                                        </td>
+                                    </c:if>
+                                    <td onclick="javascript:clickTable([{name: 'selectedLogInLogOut', value: '#{logInOut.ODRIds}'}]);">
+                                        <h:outputText value="#{logInOut.startDate}">
+                                            <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.monthDateTimeStyle}" />
+                                        </h:outputText> 
+                                    </td>
+                                    <td onclick="javascript:clickTable([{name: 'selectedLogInLogOut', value: '#{logInOut.ODRIds}'}]);">
+                                        <h:outputText value="#{logInOut.endDate}">
+                                            <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.monthDateTimeStyle}" />
+                                        </h:outputText> 
+                                    </td>
+                                    <td onclick="javascript:clickTable([{name: 'selectedLogInLogOut', value: '#{logInOut.ODRIds}'}]);">
+                                        #{logInOut.deviceName}
+                                    </td>
+                                    <td onclick="javascript:clickTable([{name: 'selectedLogInLogOut', value: '#{logInOut.ODRIds}'}]);">
+                                        #{logInOut.employee.fullName}
+                                    </td>
+                                    <td>
+                                        <p:graphicImage id="printer" url="/images/print.png" onclick="javascript:window.open('#{request.contextPath}/client/printodrservlet?odrReportId=#{logInOut.getODRIds()}&amp;companyId=#{clientSessionBean.companyId}&amp;windowId=#{clientSessionBean.conversation.id}&amp;lang=#{clientSessionBean.locale.language}', '_blank');"/>
+                                        <p:commandLink rendered="#{logInOut.endDate == null and clientSessionBean.isLoggedInAsAdmin}" partialSubmit="true" process="@this" immediate="true" ajax="true" action="#{dashboardBean.setLogInLogOutToCheckOut(logInOut)}">
+                                            <p:graphicImage url="images/checkout.png"/>
+                                        </p:commandLink>
+                                        <p:commandLink rendered="#{clientSessionBean.isLoggedInAsAdmin}" partialSubmit="true" process="@this" immediate="true" ajax="true" action="#{dashboardBean.setLogInLogOutToDelete(logInOut)}">
+                                            <p:graphicImage url="images/cancel.png"/>
+                                        </p:commandLink>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </div>
+                </h:form>
+                <h:form>
+                    <div id="ConfirmDeleteModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="ConfirmDeleteModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.confirmDelete}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-bordered" id="table-1">
+                                            <tr>
+                                                <th>#{msgs.thisWillDeleteRecord}</th>
+                                            </tr>
+                                        </table>
+                                        <p:commandButton value="#{msgs.yes}" action="#{dashboardBean.deleteLogInLogOut()}" styleClass="btn btn-secondary demo-element" update=":ODRForm:odrTable"/>  
+                                        <p:commandButton value="#{msgs.no}" type="button" styleClass="btn btn-secondary demo-element" icon="ui-icon-close">
+                                            <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                            <f:passThroughAttribute name="href" value="#ConfirmDeleteModal"/>
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+
+                <h:form>
+                    <div id="CheckoutConfirmationModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="CheckoutConfirmationModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.confirmDelete}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        #{msgs.thisWillMarkThisOfficerAsCheckedOut}<br/>
+                                        #{msgs.doYouWantToDoThis}<br/>
+                                        <p:commandButton value="#{msgs.yes}" action="#{dashboardBean.checkOutLogInLogOut()}" styleClass="btn btn-secondary demo-element" update=":ODRForm:odrTable"/>  
+                                        <p:commandButton value="#{msgs.no}" type="button" styleClass="btn btn-secondary demo-element" icon="ui-icon-close">
+                                            <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                            <f:passThroughAttribute name="href" value="#CheckoutConfirmationModal"/>
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+
+                <ui:include src="/client/facelets/odr_display.xhtml">
+                    <ui:param name="sBean" value="#{clientSessionBean}"/>
+                    <ui:param name="editODRBean" value="#{dashboardBean}"/>
+                </ui:include>
+
+            </ui:define>
+
+            <ui:define name="bootstrap_plugins">
+                <!--<script src="${facesContext.externalContext.requestContextPath}/bower_components/jquery/dist/jquery.js"></script>-->
+
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/select2/select2.min.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/jquery-icheck/icheck.min.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/parsleyjs/dist/parsley.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-3-timepicker/js/bootstrap-timepicker.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+
+                <script src="${facesContext.externalContext.requestContextPath}/js/form-graphs.js"></script>
+            </ui:define>
+
+        </ui:composition>
+    </h:body>
+
+</html>
+

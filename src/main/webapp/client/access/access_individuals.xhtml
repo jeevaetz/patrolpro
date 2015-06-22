@@ -1,0 +1,116 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <h:form>
+            <p:commandButton value="Add Access" style="float: right;" action="#{accessBean.addAccess}" update=":tabView:diagForm:accessDiag" oncomplete="PF('accessDiag').show();">
+            </p:commandButton>
+        </h:form>
+        <br/><br/><br/>
+        <p:dataTable id="accessTable" var="access" value="#{accessBean.accessIndividuals}" paginator="true" rows="40"
+                     selectionMode="single" rowKey="#{access.accessIndividualId}" selection="#{accessBean.selectedAccessIndividual}" emptyMessage="#{msgs.noDataFound}">
+            <p:ajax event="rowSelect" update=":tabView:diagForm:accessDiag"
+                    oncomplete="accessDiag.show()" />
+
+            <p:column headerText="Access Type" 
+                      sortBy="#{access.accessIndividualTypeId}" 
+                      id="aType" 
+                      filterMatchMode="contains"
+                      style="width: 135px;">
+                #{accessBean.getAccessTypeName(access.accessIndividualTypeId)}
+            </p:column>
+            <p:column headerText="First" 
+                      id="firstName" 
+                      sortBy="#{access.firstName}" 
+                      style="width: 100px;">
+                #{access.firstName}
+            </p:column>
+            <p:column headerText="Last" 
+                      id="lastName" 
+                      sortBy="#{access.lastName}" 
+                      style="width: 100px;">
+                #{access.lastName}
+            </p:column>
+            <p:column headerText="Tag?" 
+                      id="tag" 
+                      sortBy="#{access.lastName}" 
+                      style="width: 20px;">
+                <p:graphicImage url="/images/check_ok.png" rendered="#{access.tagWritten}"/>
+                <p:graphicImage url="/images/check_bad.png" rendered="#{!access.tagWritten}"/>
+            </p:column>
+        </p:dataTable>
+        <h:form id="diagForm">
+            <p:dialog id="accessDiag" modal="true" widgetVar="accessDiag" width="450" showEffect="puff" hideEffect="puff" header="Access Information">
+                <p:panelGrid id="display" styleClass="barcodeTable">
+                    <p:row>
+                        <p:column>
+                            Access Type
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu value="#{accessBean.selectedAccessIndividual.accessIndividualTypeId}">
+                                <f:selectItem itemLabel="Select One" itemValue="" />
+                                <f:selectItems value="#{accessBean.accessTypes}" var="access" itemValue="#{access.accessIndividualTypeId}"/>  
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            First Name
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{accessBean.selectedAccessIndividual.firstName}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            Last Name
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{accessBean.selectedAccessIndividual.lastName}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            Active
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox value="#{accessBean.selectedAccessIndividual.active}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            Access Permanent?
+                        </p:column>
+                        <p:column>
+                            <p:selectBooleanCheckbox value="#{accessBean.isPermanent}">
+                            </p:selectBooleanCheckbox>
+                        </p:column>
+                    </p:row>
+                    <p:row id="startDate">
+                        <p:column>
+                            Access Startdate
+                        </p:column>
+                        <p:column>
+                            <p:calendar readonly="#{accessBean.isPermanent}" value="#{accessBean.selectedAccessIndividual.startDateAccess}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row id="endDate">
+                        <p:column>
+                            Access Enddate
+                        </p:column>
+                        <p:column>
+                            <p:calendar readonly="#{accessBean.isPermanent}" value="#{accessBean.selectedAccessIndividual.endDateAccess}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid  >
+                <p:commandButton value="Close" onclick="PF('accessDiag').hide();" style="float: left;"/>
+                <p:commandButton value="Save" ajax="false" actionListener="#{accessBean.save}" update="accessTable" oncomplete="PF('accessDiag').hide();" style="float: right;"/>
+
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

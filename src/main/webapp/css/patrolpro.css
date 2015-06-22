@@ -1,0 +1,287 @@
+/* 
+    Document   : patrolpro
+    Created on : Apr 3, 2012, 12:30:09 PM
+    Author     : user
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#branch_combo
+{
+    width: 168px;
+    height: 21px;
+    position: relative;
+    margin-right: -170px;
+    margin-top: 29px;
+    left: 688px;
+}
+
+#current_spot circle {
+    stroke: red !important;
+    fill: red !important;
+}
+
+.equipmentDiag {
+    float: right;
+}
+
+.noPaddingColumn {
+    padding: 0px !important;
+    margin: 0px !important;
+    border: none;
+}
+
+.noPaddingColumn div {
+    padding: 0px !important;
+    margin: 0px !important;
+    border: none;
+}
+
+.noPaddingColumn div td {
+    border: none;
+}
+
+.noPaddingColumn div tr {
+    border: none;
+}
+
+.rightPaddingColumn {
+    padding: 0px !important;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    margin-right: 0px !important;
+    margin-left: 10px !important;
+    border: none;
+}
+
+.rightPaddingColumn div {
+    padding: 0px !important;
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    margin-right: 0px !important;
+    margin-left: 10px !important;
+    border: none;
+}
+
+.contactTxt {
+    width: 110px;
+}
+
+.fullTxt {
+    width: 100%;
+}
+
+.cityTxt {
+    
+}
+
+.stateTxt {
+    width: 60px;
+}
+
+.zipTxt {
+    width: 120px;
+}
+
+input[type=text] {
+    color: black;
+}
+
+.waitDialog .ui-dialog-titlebar {
+    display:none
+}
+
+.slider-highlight {
+    color: white!important;
+    border-color: white!important;
+}
+
+root { 
+    display: block;
+}
+
+.dashboardTable table {
+    margin: 2px;
+}
+
+.incidentForm {
+
+}
+
+.hiddenBorderTable td {
+    border-style: none;
+    border-width: 0px 0px 0px 0px;
+}
+
+.incidentTable table, .odrTable table {
+    margin: 2px;
+    display: inline;
+}
+
+.table_cell {
+    color: white;
+}
+
+.customerCal input {
+    width: 12px;
+    padding: 2px !important;
+    margin: 2px !important;
+}
+
+.customerCal {
+    width: 10px;
+}
+
+.calendarContainer {
+    height: 40px;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-right: 20px;
+}
+
+.calendarContainer .ui-slider-horizontal {
+    height: 15px;
+}
+
+.mapControls {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.ui-datepicker {
+    width: auto ! important 
+}
+
+.dashboardPanel {
+    padding-left: 0px;
+    margin-top: 20px;
+    height:500px;
+    width: 520px;
+}
+
+.dashboardCarousel {
+    padding-left: 0px;
+    height:500px;
+    width: 520px;
+}
+
+.dashboardScroll {
+    padding-left: 0px;
+    margin-top: 10px; 
+    height: 460px; 
+    width: 500px;
+}
+
+.dashboardCarousel .ui-tabs-panel, .dashboardCarousel .ui-panel-content {
+    margin-left: 0px;
+    padding-left: 0px;
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.dashboardInnerPanel {
+    height: 175px;
+    width: 480px;
+}
+
+.dashboardImagePanel {
+    width: 175px;
+}
+
+.incidentTable, .odrTable {
+    padding: 0px;
+}
+
+.incidentTable td {
+
+}
+
+.incidentTable td:nth-child(2), .odrTable td:nth-child(2) {
+    width: 100%;
+    padding: 0px;
+}
+
+.incidentDataTable {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.incidentDataTable td:nth-child(1) {
+    width: 20%;
+}
+
+.incidentDataTable td:nth-child(2) {
+    width: 80%;
+}
+
+.niceCheckboxList {
+    width: 95%;
+}
+
+.niceCheckboxList td {
+    font-size: 10px;
+    font-weight: bold;
+    background-color: white;
+}
+
+.phoney {
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0, rgb(112,112,112)),color-stop(0.87, rgb(94,94,94)),color-stop(0.44, rgb(57,57,57)));
+    background: -moz-linear-gradient(center top,rgb(112,112,112) 0%,rgb(94,94,94) 87%,rgb(57,57,57) 44%);
+    overflow: hidden;
+}
+
+.phoneyheader {
+    height: 16px;
+    white-space: nowrap;
+    text-shadow: 0 -1px 0 #000;
+    color: #fff;
+    font-family: Helvetica Neue, Helvetica, arial;
+    font-size: 18px;
+    line-height: 20px;
+    padding: 2px 4px 2px 2px;
+    font-weight: bold;
+}
+
+.phonyimage {
+    float: left;
+    position: relative;
+    top: 10px;
+    margin-top: 2px;
+    left: 5px;
+    width: 58px;
+    height: 90px;
+}
+
+.phoneytext {
+    position: relative;
+    float: left;
+    top: 10px;
+    margin-top: 2px;
+    margin-bottom: 10px;
+    padding-left: 16px;
+}
+
+.phoneytab {
+    text-shadow: 0 -1px 0 #000;
+    color: #fff;
+    font-family: Helvetica Neue, Helvetica, arial;
+    font-size: 18px;
+    background: rgb(112,112,112) !important;
+}
+
+.data_line {
+    float: left; 
+    width: 100px;
+    clear: left;
+    font-weight: bold;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.data_d {
+    float: left; 
+    padding-top: 4px;
+    padding-bottom: 4px;
+}

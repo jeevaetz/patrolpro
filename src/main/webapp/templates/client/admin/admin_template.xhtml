@@ -1,0 +1,261 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="#{sessionBean.locale.language}" class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view  locale="#{sessionBean.locale}">
+        <h:head>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+            <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+            <meta http-equiv="Pragma" content="no-cache" />
+            <meta http-equiv="Expires" content="0" />
+
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+            <!-- Google Font: Open Sans -->
+            <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,800,800italic"/>
+            <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,300,700"/>
+
+            <!-- Font Awesome CSS -->
+            <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/fontawesome/css/font-awesome.min.css"/>
+
+            <!-- Bootstrap CSS -->
+            <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+
+            <!-- App CSS -->
+            <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/css/mvpready-admin.css"/>
+
+            <link rel="stylesheet" media="screen,projection" type="text/css" href="${facesContext.externalContext.requestContextPath}/css/ui.slider.extras.css" />
+            <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-datepicker/css/datepicker3.css"/>
+            
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-datepicker/js/locales/bootstrap-datepicker.lt.js"></script>
+
+            <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!--[if lt IE 9]>
+            <script src="//oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+            <![endif]-->
+
+            <title>Patrol Pro</title>
+
+            <script type="text/javascript">
+                function showLoadingBar(text) {
+                    document.getElementById("loadingImageSpan").innerHTML = '<img src="jQuery{facesContext.externalContext.requestContextPath}/images/loading26.gif"/>' + text;
+                    return true;
+                }
+
+                function hideLoadingBar() {
+                    jQuery('#loadingImageSpan').html('');
+                }
+
+            </script>
+
+            <script type="text/javascript">
+                document.documentElement.className = 'js';
+            </script>
+
+            <ui:insert name="javascript"/>
+        </h:head>
+        <h:body styleClass=" ">
+
+            <div id="wrapper">
+
+                <header class="navbar navbar-inverse" role="banner">
+
+                    <div class="container">
+
+                        <div class="navbar-header">
+                            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <i class="fa fa-cog"></i>
+                            </button>
+
+                            <a href="./admin_dashboard.xhtml?windowId=#{sessionBean.getConversation().getId()}" class="navbar-brand navbar-brand-img">
+                                <img src="${facesContext.externalContext.requestContextPath}/img/#{sessionBean.getLogoURL()}" alt="Patrol Pro"/>
+                            </a>
+                        </div> <!-- /.navbar-header -->
+
+
+                        <nav class="collapse navbar-collapse" role="navigation">
+
+                            <ul class="nav navbar-nav noticebar navbar-left">
+
+
+                            </ul>
+                            <h:form id="langauge_form">
+                                <ul class="nav navbar-nav navbar-right">      
+                                    <li class="dropdown navbar-profile">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
+                                            #{msgs.language}
+                                            <i class="fa fa-caret-down"></i>
+                                        </a>
+
+
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li>
+                                                <p:commandLink style="float: left;" action="#{sessionBean.changeLanguage('en')}" value="English" ajax="false"/>
+                                                <p:graphicImage style="float: right;" url="/images/checkbox24x24.png" rendered="#{sessionBean.locale.language == 'en'}"/>
+                                            </li>
+                                            <li>
+                                                <p:commandLink style="float: left;" action="#{sessionBean.changeLanguage('lt')}" value="Lithuanian" ajax="false" /> 
+                                                <p:graphicImage style="float: right;" url="/images/checkbox24x24.png" rendered="#{sessionBean.locale.language == 'lt'}"/>
+                                            </li>
+                                            <li jsf:rendered="#{sessionBean.showLanguageApplicationLink()}">
+                                                <p:commandLink style="float: left;" action="#{sessionBean.changeLanguage('dbg')}" value="Debug" ajax="false" /> 
+                                                <p:graphicImage style="float: right;" url="/images/checkbox24x24.png" rendered="#{sessionBean.locale.language == 'dbg'}"/>
+                                            </li>
+                                            <li jsf:rendered="#{sessionBean.showLanguageApplicationLink()}">
+                                                <p:commandLink style="float: left;" action="#{sessionBean.reloadBundle()}" value="Reload" ajax="false" /> 
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </h:form>
+
+                            <h:form rendered="#{sessionBean.getAccessibleBranches().size() > 0}">
+                                <ul class="nav navbar-nav navbar-right">      
+                                    <li class="dropdown navbar-profile">
+                                        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
+                                            #{msgs.branches}
+                                            <i class="fa fa-caret-down"></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu" role="menu">
+                                            <ui:repeat value="#{sessionBean.getAccessibleBranches()}" var="branch">
+                                                <li>
+                                                    <p:commandLink style="float: left; width: 80%;" action="#{sessionBean.setSelectedBranch(activeBean, branch.branchId)}" value="#{branch.branchName}" ajax="false"/>
+                                                    <p:graphicImage style="float: right; width: 20%;" url="/images/checkbox24x24.png" rendered="#{sessionBean.selectedBranchId.equals(branch.branchId)}"/>
+                                                </li>
+                                            </ui:repeat>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </h:form>
+                        </nav>
+
+                    </div> <!-- /.container -->
+
+                </header>
+
+                <div class="mainnav">
+
+                    <div class="container">
+
+                        <a class="mainnav-toggle" data-toggle="collapse" data-target=".mainnav-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <i class="fa fa-bars"></i>
+                        </a>
+
+                        <nav class="collapse mainnav-collapse" role="navigation">
+                            <h:form id="menuForm">
+                                <ul class="mainnav-menu">
+                                    <li jsf:rendered="#{sessionBean.showOverviewAnalyticsTab()}" jsf:styleClass="#{ view.viewId.endsWith('analytics.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_analytics.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.analytics}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('dashboard.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_dashboard.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.devices}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('client.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_client.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.clients}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('route.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_route.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.routes}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('employee.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_employee.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.employees}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('forms.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_forms.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.forms}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('reports.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_reports.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.clientData}</p></div>
+                                        </a>
+                                    </li>
+                                    <li class="#{ view.viewId.endsWith('settings.xhtml') ? 'active' : ''}">
+                                        <a id="reportTab"
+                                           href="admin_settings.xhtml?windowId=#{sessionBean.conversation.id}">
+                                            <div class="clearfix grpelem"><p>#{msgs.settings}</p></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <p:commandLink  action="#{sessionBean.logOut}">
+                                            <div class="clearfix grpelem"><p>#{msgs.logout}</p></div>
+                                        </p:commandLink>  
+                                    </li>
+                                </ul>
+                            </h:form>
+                        </nav>
+                    </div> <!-- /.container -->
+                </div> <!-- /.mainnav -->
+
+                <div class="content">
+                    <div class="container" id="container">
+                        <div class="row">
+                            <ui:include src="/client/facelets/equipment_window.xhtml"/>
+                            <div class="portlet">
+                                <ui:insert name="body"/>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+
+            <footer class="footer">
+                <div class="container">
+                    <p class="pull-left">Copyright 2015 Patrol Pro..</p>
+                </div>
+            </footer>
+
+
+            <!-- Bootstrap core JavaScript -->
+            <!-- Core JS -->
+            <!--<script src="${facesContext.externalContext.requestContextPath}/bower_components/jquery/dist/jquery.js"></script>-->
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/slimscroll/jquery.slimscroll.min.js"></script>
+
+
+            <!-- Plugin JS -->
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/flot/excanvas.min.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/flot/jquery.flot.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/flot/jquery.flot.pie.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/flot/jquery.flot.resize.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/flot/jquery.flot.time.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/bower_components/flot.tooltip/js/jquery.flot.tooltip.js"></script>
+            <!-- App JS -->
+            <script src="${facesContext.externalContext.requestContextPath}/global/js/mvpready-core.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/global/js/mvpready-helpers.js"></script>
+            <script src="${facesContext.externalContext.requestContextPath}/js/mvpready-admin.js"></script>
+
+            <ui:insert name="bootstrap_plugins"/>
+        </h:body>
+    </f:view>
+</html>
+

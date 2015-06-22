@@ -1,0 +1,310 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pass="http://java.sun.com/jsf/passthrough"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../../templates/client/admin/admin_template.xhtml">
+            <ui:define name="body">   
+                <h:form id="AdminDashboardFormTop" enctype="multipart/form-data">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />  
+
+                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.equipmentLink}" update=":AdminDashboardFormBottom:linkContent" action="#{adminDashboardBean.addNew}">
+                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                        <f:passThroughAttribute name="href" value="#sendLinkModal"/>
+                    </p:commandLink>
+                </h:form>
+                <h:form id="AdminDashboardMiddle">
+                    <div jsf:id="equipmentTable">
+                        <p:messages autoUpdate="true"/>
+
+                        <ui:repeat value="#{adminDashboardBean.clientEquipment}" var="equipment">
+                            <div>
+                                <table class="table table-striped table-bordered" id="table-1">
+                                    <tr>
+                                        <th colspan="4"><h3>#{equipment.clientEquipment.entity.clientName}</h3></th>
+                                    </tr>
+                                    <tr>
+                                        <th width="30%">#{msgs.phoneNumber}</th>
+                                        <td width="30%">#{equipment.clientEquipment.phoneNumber}</td>
+                                        <th width="30%">#{msgs.gpsEnabled}</th>
+                                        <td width="10%">
+                                            <p:graphicImage url="/images/check_ok.png" rendered="#{equipment.hasGPS}"/>
+                                            <p:graphicImage url="/images/check_bad.png" rendered="#{!equipment.hasGPS}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>#{msgs.lastContactDate}</th>
+                                        <td>
+                                            <h:outputText value="#{equipment.lastContactDate}" rendered="#{equipment.lastContactDate != null}">
+                                                <f:convertDateTime timeZone="#{sessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}">
+                                                </f:convertDateTime>
+                                            </h:outputText>
+                                            <h:outputText rendered="#{equipment.lastContactDate == null}" value="Never contacted server!"/>
+                                        </td>
+                                        <th>#{msgs.networkLocation}</th>
+                                        <td>
+                                            <p:graphicImage url="/images/check_ok.png" rendered="#{equipment.hasNetwork}"/>
+                                            <p:graphicImage url="/images/check_bad.png" rendered="#{!equipment.hasNetwork}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>#{msgs.versionRunning}</th>
+                                        <td>#{equipment.version}</td>
+                                        <th>#{msgs.airplaneModeOff}</th>
+                                        <td>
+                                            <p:graphicImage url="/images/check_ok.png" rendered="#{!equipment.isAirplaneOn}"/>
+                                            <p:graphicImage url="/images/check_bad.png" rendered="#{equipment.isAirplaneOn}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>#{msgs.batteryPercentage}</th>
+                                        <td>
+                                            <h:outputText value="#{equipment.batteryPercentage / 100.0}">
+                                                <f:convertNumber type="percent"/>
+                                            </h:outputText>
+                                        </td>
+                                        <th>#{msgs.hasUpToDateLibraries}</th>
+                                        <td>
+                                            <p:graphicImage url="/images/check_ok.png" rendered="#{equipment.hasGoogleService}"/>
+                                            <p:graphicImage url="/images/check_bad.png" rendered="#{!equipment.hasGoogleService}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>#{msgs.signalPercentage}</th>
+                                        <td>
+                                            <h:outputText value="#{equipment.signalPercentage}">
+                                                <f:convertNumber type="percent"/>
+                                            </h:outputText>
+                                        </td>
+                                        <th>#{msgs.isDeviceOn}</th>
+                                        <td>
+                                            <p:graphicImage url="/images/check_ok.png" rendered="#{!equipment.powerOff}"/>
+                                            <p:graphicImage url="/images/check_bad.png" rendered="#{equipment.powerOff}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>#{msgs.clientUserName}</th>
+                                        <td>#{equipment.clientEquipment.entity.cUserName}</td>
+                                        <th>#{msgs.password}</th>
+                                        <td>
+                                            #{equipment.clientEquipment.entity.cPassword}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">
+                                            <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.editDevice}" update=":AdminDashboardFormBottom:popupContent" action="#{adminDashboardBean.setSelectedEquipment(equipment.clientEquipment)}">
+                                                <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                                <f:passThroughAttribute name="href" value="#styledModal"/>
+                                            </p:commandLink>
+                                        </td>
+                                        <td colspan="2">
+                                            <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.deviceHistory}" update=":deviceHistoryForm:popupHistoryContent" action="#{adminDashboardBean.loadContactsForEquipment(equipment.clientEquipment)}">
+                                                <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                                <f:passThroughAttribute name="href" value="#historyModal"/>
+                                            </p:commandLink>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </ui:repeat>
+                    </div>
+                </h:form>
+                <h:form id="AdminDashboardFormBottom">
+                    <p:commandButton value="#{msgs.download}" onclick="window.open('${facesContext.externalContext.requestContextPath}/GenerateEquipmentFileServlet')"/>
+
+                    <div id="sendLinkModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="linkContent">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.sendLink}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        #{msgs.sendLinkMessage}
+                                        <p:inputText id="phoneNumber" value="#{adminDashboardBean.phoneNumber}"/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandButton value="#{msgs.sendLink}" action="#{adminDashboardBean.sendLinks}">
+                                            <f:passThroughAttribute name="data-dismiss" value="modal"/>
+                                        </p:commandButton>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="styledModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog" style=" width: 60%;">
+                            <div jsf:id="popupContent">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.equipment}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-striped table-bordered" id="table-1">
+                                            <tr>
+                                                <th colspan="4"><h3>#{adminDashboardBean.selectedEquipment.entity.clientName}</h3></th>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 15%;">#{msgs.client}</th>
+                                                <td style="width: 35%;">
+                                                    <h:selectOneMenu value="#{adminDashboardBean.selectedEquipment.clientId}" style="width: 100%;">
+                                                        <f:selectItems value="#{adminDashboardBean.clients}" var="client" itemValue="#{client.clientId}" itemLabel="#{client.clientName}" /> 
+                                                    </h:selectOneMenu>
+                                                </td>
+                                                <th style="width: 15%;">#{msgs.equipment}</th>
+                                                <td style="width: 35%;">
+                                                    <h:selectOneMenu value="#{adminDashboardBean.selectedEquipment.equipmentId}" style="width: 100%;">
+                                                        <f:selectItems value="#{adminDashboardBean.equipment}" var="equipment" itemValue="#{equipment.equipmentId}" itemLabel="#{equipment.equipmentName}"/> 
+                                                    </h:selectOneMenu>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>#{msgs.nickname}</th>
+                                                <td>
+                                                    <p:inputText value="#{adminDashboardBean.selectedEquipment.nickname}" style="width: 100%;"/>
+                                                </td>
+                                                <th>#{msgs.mdn}</th>
+                                                <td>
+                                                    <p:inputText value="#{adminDashboardBean.selectedEquipment.mdn}" style="width: 100%;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>#{msgs.issueDate}</th>
+                                                <td>
+                                                    <p:calendar value="#{adminDashboardBean.selectedEquipment.dateIssued}" style="width: 100%;"/>
+                                                </td>
+                                                <th>#{msgs.phoneNumber}</th>
+                                                <td>
+                                                    <p:inputText value="#{adminDashboardBean.selectedEquipment.phoneNumber}" style="width: 100%;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>#{msgs.contractRenewal}</th>
+                                                <td>
+                                                    <p:calendar value="#{adminDashboardBean.selectedEquipment.dateOfContractRenewal}" style="width: 100%;"/>
+                                                </td>
+                                                <th>#{msgs.returnedDate}</th>
+                                                <td>
+                                                    <p:calendar value="#{adminDashboardBean.selectedEquipment.dateReturned}" style="width: 100%;"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>#{msgs.serialNumber}</th>
+                                                <td>
+                                                    <p:inputText value="#{adminDashboardBean.selectedEquipment.serialNumber}" style="width: 100%;"/>
+                                                </td>
+                                                <th></th>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <th>#{msgs.lastContact}</th>
+                                                <td>
+                                                    <h:outputLabel value="#{adminDashboardBean.selectedEquipment.lastContactDate}">
+                                                        <f:convertDateTime timeZone="#{sessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                                                    </h:outputLabel>
+                                                </td>
+                                                <th>#{msgs.lastEmployee}</th>
+                                                <td>
+                                                    #{adminDashboardBean.getLastEmployeeUsedDevice(adminDashboardBean.selectedEquipment.clientEquipmentId).getEmployeeFullName()}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>#{msgs.currentVersion}</th>
+                                                <td>
+                                                    #{adminDashboardBean.selectedEquipment.workingVersion}
+                                                </td>
+                                                <th>#{msgs.active}</th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminDashboardBean.selectedEquipment.active}"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandButton value="#{msgs.save}" action="#{adminDashboardBean.save()}" update=":AdminDashboardMiddle:equipmentTable"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <h:form id="deviceHistoryForm">
+                    <div id="historyModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog" style=" width: 60%;">
+                            <div jsf:id="popupHistoryContent">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.equipmentHistory}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table table-striped table-bordered" id="table-history">
+                                            <tr>
+                                                <th>#{msgs.contactDate}</th>
+                                                <th>#{msgs.battery}</th>
+                                                <th>#{msgs.signal}</th>
+                                                <th>#{msgs.gps}</th>
+                                                <th>#{msgs.network}</th>
+                                                <th>#{msgs.airplane}</th>
+                                                <th>#{msgs.update}</th>
+                                                <th>#{msgs.on}</th>
+                                            </tr>
+                                            <ui:repeat value="#{adminDashboardBean.contacts}" var="contact">
+                                                <tr>
+                                                    <td>
+                                                        <h:outputText value="#{contact.contactTime}">
+                                                            <f:convertDateTime timeZone="#{sessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                                                        </h:outputText>
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{contact.batteryPercentage / 100}">
+                                                            <f:convertNumber type="percent"/>
+                                                        </h:outputText>
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{contact.signalPercentage}">
+                                                            <f:convertNumber type="percent"/>
+                                                        </h:outputText>
+                                                    </td>
+                                                    <td>
+                                                        <p:graphicImage url="/images/check_ok.png" rendered="#{contact.gpson}"/>
+                                                        <p:graphicImage url="/images/check_bad.png" rendered="#{!contact.gpson}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:graphicImage url="/images/check_ok.png" rendered="#{contact.networkLocationOn}"/>
+                                                        <p:graphicImage url="/images/check_bad.png" rendered="#{!contact.networkLocationOn}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:graphicImage url="/images/check_ok.png" rendered="#{!contact.inairplanemode}"/>
+                                                        <p:graphicImage url="/images/check_bad.png" rendered="#{contact.inairplanemode}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:graphicImage url="/images/check_ok.png" rendered="#{contact.hasGooglePlayServices}"/>
+                                                        <p:graphicImage url="/images/check_bad.png" rendered="#{!contact.hasGooglePlayServices}"/>
+                                                    </td>
+                                                    <td>
+                                                        <p:graphicImage url="/images/check_ok.png" rendered="#{!contact.powerOff}"/>
+                                                        <p:graphicImage url="/images/check_bad.png" rendered="#{contact.powerOff}"/>
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

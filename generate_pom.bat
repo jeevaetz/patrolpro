@@ -1,0 +1,1 @@
+c:\Users\ira\AppData\Roaming\NetBeans\7.2\maven\bin\mvn.bat -DartifactId=patrolpro -DgroupId=patrolpro -Dversion=1 -Dpackaging=jar -Dfile=C:\\work\\champion\\SchedfoxLib\\dist\\SchedfoxLib.jar -DgeneratePom=true -Dmaven.ext.class.path=C:\\Users\\ira\\AppData\\Roaming\\NetBeans\\7.2\\maven-nblib\\netbeans-eventspy.jar install:install-file\"

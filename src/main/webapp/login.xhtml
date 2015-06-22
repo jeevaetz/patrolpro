@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+                             xmlns:ui="http://java.sun.com/jsf/facelets"
+                             xmlns:h="http://java.sun.com/jsf/html"
+                             xmlns:jsf="http://xmlns.jcp.org/jsf"
+                             xmlns:p="http://primefaces.org/ui"> <!--<![endif]-->
+    <h:head>
+        <title>Login - Patrol Pro</title>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content=""/>
+        <meta name="author" content=""/>
+
+        <!-- Google Font: Open Sans -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,800,800italic"/>
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,300,700"/>
+
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/fontawesome/css/font-awesome.min.css"/>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+
+        <!-- App CSS -->
+        <link href="${facesContext.externalContext.requestContextPath}/css/mvpready-landing.css" rel="stylesheet"/>
+        <link href="${facesContext.externalContext.requestContextPath}/css/mvpready-flat.css" rel="stylesheet"/>
+        <link href="${facesContext.externalContext.requestContextPath}/css/animate.css" rel="stylesheet"/>
+        <!-- <link href="./css/custom.css" rel="stylesheet">-->
+
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <link rel="shortcut icon" href="favicon.ico"/>
+    </h:head>
+
+    <body class=" ">
+
+        <div id="wrapper">
+
+            <header class="navbar navbar-inverse" role="banner">
+
+                <div class="container">
+
+                    <div class="navbar-header">
+                        <a href="${facesContext.externalContext.requestContextPath}/" class="navbar-brand navbar-brand-img">
+                            <img src="${facesContext.externalContext.requestContextPath}/img/#{clientSessionBean.getLogoURL()}" alt="Patrol Proy"/>
+                        </a>
+
+                        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    </div> <!-- /.navbar-header -->
+
+
+                    <nav class="collapse navbar-collapse" role="navigation">
+
+                        <ul class="nav navbar-nav navbar-right mainnav-menu">
+
+                            <li class="">
+                                <a href="${facesContext.externalContext.requestContextPath}/index.html">Home</a>
+                            </li>    
+
+                            <li class="">
+                                <a href="${facesContext.externalContext.requestContextPath}/page-features.html">Features</a>
+                            </li>      
+
+                            <li class="">
+                                <a href="${facesContext.externalContext.requestContextPath}/page-faq.html">FAQ</a>
+                            </li>  
+
+                            <li class="">
+                                <a href="${facesContext.externalContext.requestContextPath}/page-signup.xhtml">Request Trial</a>
+                            </li>  
+                            <li class="">
+                                <a href="${facesContext.externalContext.requestContextPath}/page-blog.html">Blog</a>
+                            </li>
+
+                            <li>
+                                <a href="${facesContext.externalContext.requestContextPath}/page-contact.xhtml">Contact</a>
+                            </li>     
+
+                            <li class="active">
+                                <a href="${facesContext.externalContext.requestContextPath}/login.xhtml">Login</a>
+                            </li>    
+
+                        </ul>
+
+                    </nav>
+
+                </div> <!-- /.container -->
+
+            </header>
+
+
+
+            <div class="masthead">
+
+                <div class="container">
+
+                    <h1 class="masthead-subtitle">
+                        <h:outputText rendered="#{loginClientBean.loadedCompany == null}" value="Login to Patrol Pro"/>
+                        <h:outputText rendered="#{loginClientBean.loadedCompany != null}" value="Welcome, #{loginClientBean.loadedCompany.companyName}! Login"/>
+                    </h1>
+
+
+                </div> <!-- /.container -->
+
+            </div> <!-- /.masthead -->
+
+
+
+            <div class="content">
+
+                <div class="container">
+
+                    <div class="layout layout-stack-sm layout-main-left">
+
+                        <div class="col-sm-8 layout-main">
+
+                            <h4 class="content-title">
+                                <span>Enter in your provided login credentials below</span>
+                            </h4>
+
+                            <h:form id="loginForm" styleClass="form form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <label>User Name <span class="required">*</span></label>
+                                        <p:inputText id="username" value="#{loginClientBean.userName}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <label>Password <span class="required">*</span></label>
+                                        <p:password id="password" value="#{loginClientBean.password}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <p:messages id="passwordError"/>
+                                    <p:messages id="globalErrors" globalOnly="true"/>
+                                </div>
+
+                                <p:commandButton value="Login" id="u2110-4" action="#{loginClientBean.doLogin}" update="loginForm" ajax="true" styleClass="ui-commandlink ui-widget btn btn-secondary demo-element">
+
+                                </p:commandButton>
+                            </h:form>
+
+                            <p:commandButton value="Download App" rendered="#{loginClientBean.loadedCompany != null}" onclick="javascript:window.open('#{loginClientBean.androidApkLocation}');" styleClass="visible-xs visible-sm ui-commandlink ui-widget btn btn-secondary demo-element">
+
+                            </p:commandButton>
+
+                            <br/><br/>
+                            <span jsf:rendered="#{loginClientBean.loadedCompany != null}" jsf:styleClass="hidden-xs hidden-sm badge badge-tertiary">*You may download your application @ <a href="${facesContext.externalContext.request.scheme}://${facesContext.externalContext.request.serverName}#{loginClientBean.androidApkLocation}">${facesContext.externalContext.request.scheme}://${facesContext.externalContext.request.serverName}#{loginClientBean.androidApkLocation}</a></span>
+                        </div> <!-- /.col -->
+
+                        <div class="col-sm-4 layout-sidebar">
+                            <h4 class="content-title">
+                                <span>Office Location</span>
+                            </h4>
+
+                            <ul class="icons-list">
+                                <li>
+                                    <i class="icon-li fa fa-map-marker"></i>
+                                    9101 Burnet Road <br/>
+                                    Suite 100 <br/>
+                                    Austin, TX 78758
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-phone"></i>
+                                    +1 (513) 580-4357
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-envelope"></i>
+                                    <a href="mailto:rich@patrolpro.com">rich@patrolpro.com</a>
+                                </li>
+                            </ul>
+
+                            <br/><br/>
+
+                            <h4 class="content-title">
+                                <span>Business Hours</span>
+                            </h4>
+
+                            <ul class="icons-list">
+                                <li>
+                                    <i class="icon-li fa fa-clock-o"></i>
+                                    Monday to Friday - 9am to 5pm (CST)
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-clock-o"></i>
+                                    Saturday - Closed
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-clock-o"></i>
+                                    Sunday - Closed
+                                </li>
+                            </ul>
+
+                        </div> <!-- /.col -->
+
+                    </div> <!-- /.row -->
+
+                </div> <!-- /.container -->   	
+
+            </div> <!-- /.content -->
+
+
+        </div> <!-- /#wrapper -->
+
+        <footer class="footer">
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-sm-3">
+                        <h4 class="content-title">
+                            <span>Patrol Pro</span>
+                        </h4>        
+
+                        Security guard communication and reporting has never been easier with the Patrol Pro software for handheld Android devices.Install Patrol Pro on any Android device and reports, pictures, recordings, barcode scanning, post instructions, and GPS tracking are available real time.
+                    </div> <!-- /.col -->
+
+
+                    <div class="col-sm-3">
+
+                        <h4 class="content-title">
+                            <span>Twitter Feed</span>
+                        </h4>
+
+                        <div id="tweets"></div>
+                    </div> <!-- /.col -->
+
+
+                    <div class="col-sm-3">
+
+                        <h4 class="content-title">
+                            <span>Stay Connected</span>
+                        </h4>
+
+                        <p>Stay Connected by subscribing to our email list on the right side and hear about new features as they are introduced.</p>
+
+                        <br/>
+
+
+
+                    </div> <!-- /.col -->
+
+
+                    <div class="col-sm-3">
+
+                        <h4 class="content-title">
+                            <span>Stay Updated</span>
+                        </h4>
+
+                        <p>Get emails about new theme launches &amp;  future updates.</p>
+
+                        <form action="/" class="form">
+
+                            <div class="form-group">
+                                <!-- <label>Email: <span class="required">*</span></label> -->
+                                <input class="form-control" id="newsletter_email" name="newsletter_email" type="text" value="" required="" placeholder="Email Address"/>
+                            </div> <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <button class="btn btn-transparent">Subscribe Me</button>
+                            </div> <!-- /.form-group -->
+
+                        </form>
+
+                    </div> <!-- /.col -->
+
+                </div> <!-- /.row -->
+
+            </div> <!-- /.container -->
+
+        </footer>
+
+        <footer class="copyright">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <p>Copyright 2014 Patrol Pro.</p>
+                    </div> <!-- /.col -->
+
+                </div> <!-- /.row -->
+
+            </div>
+        </footer>
+
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="${facesContext.externalContext.requestContextPath}/js/libs/jquery-1.10.2.min.js"></script>
+        <script src="${facesContext.externalContext.requestContextPath}/js/libs/bootstrap.min.js"></script>
+
+        <script src="${facesContext.externalContext.requestContextPath}/js/plugins/timeago/jquery.timeago.js"></script>
+
+        <!--[if lt IE 9]>
+        <script src="./js/libs/excanvas.compiled.js"></script>
+        <![endif]-->
+
+        <!-- App JS -->
+        <script src="${facesContext.externalContext.requestContextPath}/js/mvpready-core.js"></script>
+        <script src="${facesContext.externalContext.requestContextPath}/js/mvpready-landing.js"></script>
+
+
+    </body>
+</html>

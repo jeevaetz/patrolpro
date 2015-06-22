@@ -1,0 +1,132 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body> 
+        <h:form>
+            <p:remoteCommand name="updateMapping" action="#{mapBean.generateGPSData()}" oncomplete="parseDeviceData(xhr, status, args);" update=":EmployeeForm:employeeListingPanel"/>
+        </h:form>
+
+        <div jsf:id="mappingPanel" class="noPaddingClass">
+            <span id="loadingImageSpan" style="color: white;"></span>
+
+            <h:form id="GeneralForm">
+                <p:toolbar id="mapHeader">
+                    <f:facet name="left">
+                        <div class="input-group date ui-datepicker" style="float: left;" data-date-language="#{clientSessionBean.locale.language}" data-date-autoclose="true" data-date-format="#{msgs.javascriptShortDate}" data-provide="datepicker">
+                            <input jsf:binding="#{mapBean.dateInput}" jsf:value="#{mapBean.dateInputStr}" type="text" class="form-control" placeholder="#{msgs.date}" data-date-format="#{msgs.shortDateStyle}"/>
+                            <span class="input-group-addon">
+                                <i class="fa fa-calendar"/>
+                            </span>
+                        </div>
+                        
+                        <p:commandButton ajax="true" actionListener="#{mapBean.refreshMap}" title="#{msgs.refresh}" onclick="PF('loadingModal').show();
+                                updateMapping()" icon="ui-icon-refresh" oncomplete="PF('loadingModal').hide();">
+                        </p:commandButton>
+                        
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+
+                        <p:commandButton type="button" id="generalOptions" title="#{msgs.generalOptions}" icon="ui-icon-gear" />
+                        <p:commandButton type="button" id="employeeOptions" title="#{msgs.employeeOptions}" icon="ui-icon-person" />
+                    </f:facet>
+                </p:toolbar>       
+
+                <p:overlayPanel id="generalOptionsWindow" for="generalOptions" hideEffect="fade" dynamic="false" style="width:250px">
+                    <h:panelGrid columns="1" style="width: 100%;">
+                        <p:selectBooleanCheckbox id="showHistoryChk" style="float: right;">#{msgs.showHistoricalData} </p:selectBooleanCheckbox>
+                        <p:selectBooleanCheckbox id="centerActivityChk" style="float: right;">#{msgs.centerOnActivity} </p:selectBooleanCheckbox>
+                        <p:selectBooleanCheckbox id="showAccuracyChk" style="float: right;">#{msgs.showAccuracy} </p:selectBooleanCheckbox>
+                        <p:selectBooleanCheckbox id="showTrackingChk" style="float: right;" value="#{mapBean.showTracking}">
+                            <p:ajax event="change" listener="#{mapBean.refreshBarCodes()}" update=":GPSFom:mapping"/>
+                            #{msgs.showTrackingPoints}
+                        </p:selectBooleanCheckbox>
+                    </h:panelGrid>
+                </p:overlayPanel>
+            </h:form>
+
+            <h:form id="EmployeeForm">
+                <p:overlayPanel id="employeeOptionsWindow" widgetVar="employeeOptionsWindow" for=":GeneralForm:employeeOptions" hideEffect="fade" dynamic="false" style="width: 300px">
+                    <p:panel id="employeeListingPanel" style="border: none; padding: 0px; margin: 0px; width: 100%;">
+                        <p:panelGrid columns="1" style="border: none; padding: 0px; margin: 0px; width: 100%;">
+                            <ui:repeat value="#{mapBean.employeeListedInMap}" var="emp" varStatus="loopVar">
+                                <p:panel style="clear: both; border: none; padding: 0px; margin: 0px; background: none;">
+                                    <p:graphicImage value="#{emp.employeeIcon}" style="float: left; height: 22px;"/>
+                                    <p:selectBooleanCheckbox id="employeeIdChk" style="float: right;" value="#{emp.isSelected}" widgetVar="employeeTracking_#{emp.emp.employeeId}" onchange="javascript:toggleDisplay(#{emp.emp.employeeId}, 'employeeTracking_#{emp.emp.employeeId}');">
+                                        #{emp.emp.employeeLastName}, #{emp.emp.employeeFirstName}
+                                    </p:selectBooleanCheckbox>
+
+                                </p:panel>
+                            </ui:repeat>
+                        </p:panelGrid>
+                    </p:panel>
+                </p:overlayPanel>
+            </h:form>
+
+            <h:form id="GPSFom">
+                <p:gmap widgetVar="googleMap" id="mapping" center="#{mapBean.latitude},#{mapBean.longitude}" zoom="#{mapBean.zoom}" type="HYBRID" style="height:420px" model="#{mapBean.polylineModel}">  
+                    <p:ajax event="stateChange" listener="#{mapBean.onStateChange}" />
+                </p:gmap>  
+            </h:form>
+        </div>
+        <input type="hidden" id="selectedClientId" value="#{clientSessionBean.selectedClient.clientId}"/>
+
+        <div style="float: right; width: 150px; height: 25px; padding-right: 65px;">
+            <input tye="text" id="specificTime" readonly="readonly" style="border:0; background-color:transparent; font-weight:bold; text-align: right;"/>
+        </div>
+        <label for="amount">#{msgs.displayingGPSFor}: </label>
+        <input type="text" id="gps" readonly="readonly" style="border:0; background-color:transparent; font-weight:bold;" value="0"/>
+
+        <div style="height: 5px;"/>
+        <div id="slider"></div>
+        <div style="height: 30px;"/>
+        <script>
+
+
+            $(function () {
+                jQuery("#slider").slider({
+                    value: 0,
+                    step: 5,
+                    min: 0,
+                    max: 1440,
+                    slide: function (event, ui) {
+                        var time = (ui.value / 1440) * 100;
+                        var hourReadable = (Math.floor(ui.value / 60) * 100);
+                        var minReadable = Math.floor(ui.value % 60);
+                        time = hourReadable + minReadable;
+                        jQuery("#gps").val(time);
+
+                        changeMap(ui.value, 0);
+                    }
+                });
+                setSliderTicks();
+            });
+        </script>
+
+        <div class="mapControls" jsf:id="mapControls">
+            <p:commandLink>
+                <p:graphicImage url="/images/seek-back.png" onclick="javascript:rewind();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/arrow-back.png" onclick="javascript:back();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/stop.png" onclick="javascript:stop();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/arrow-forward.png" onclick="javascript:play();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/arrows-seek-forward.png" onclick="javascript:forward();"/>
+            </p:commandLink>
+        </div>
+
+
+
+    </h:body>
+</html>
+

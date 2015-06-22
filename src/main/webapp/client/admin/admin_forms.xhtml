@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pass="http://java.sun.com/jsf/passthrough"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../../templates/client/admin/admin_template.xhtml">
+            <ui:define name="javascript">
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/css/fileinput.min.css"/>
+                <script type="text/javascript" src="${facesContext.externalContext.requestContextPath}/js/fileinput.min.js"></script>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#input-21").fileinput({
+                            uploadAsync: false,
+                            browseClass: "btn btn-success",
+                            browseLabel: "Pick Report",
+                            browseIcon: '<i class="glyphicon glyphicon-picture"></i>',
+                            removeClass: "btn btn-danger",
+                            removeLabel: "Delete",
+                            removeIcon: '<i class="glyphicon glyphicon-trash"></i>',
+                            uploadClass: "btn btn-info",
+                            uploadLabel: "Upload",
+                            elErrorContainer: "#fileErrorBlock",
+                            msgErrorClass: "error-danger",
+                            uploadExtraData: function () {
+                                return {
+                                    mobileFormId: document.getElementById('mobileFormId').value
+                                };
+                            },
+                            uploadUrl: "${facesContext.externalContext.requestContextPath}/UploadJasperReportServlet?windowId=#{sessionBean.getConversation().getId()}&amp;companyId=#{sessionBean.companyId}",
+                                        uploadIcon: '<i class="glyphicon glyphicon-upload"></i>',
+                                    });
+
+                                    $("#input-21").on('fileuploaded', function (event, data, previewId, index) {
+                                        updateForm();
+                                        $("img[id$='empImage']").attr("src", $("img[id$='empImage']").attr("src") + '?' + new Date().getTime());
+                                        location.reload();
+                                    });
+                                });
+                </script>
+            </ui:define>
+
+            <ui:define name="body">   
+
+                <p:messages id="messages" showDetail="true" autoUpdate="true" globalOnly="true" />  
+                <h:form>
+                    <p:remoteCommand name="clickTable" action="#{adminFormBean.newForm}" update=":AdminDashboardFormBottom:createFormDialog" oncomplete="$('#EditFormDialog').modal('show')"/>
+                    <p:remoteCommand name="clickFormDetail" action="#{adminFormBean.setSelectedFormData}" update=":AdminDashboardFormBottom:EditFormDataDialog" oncomplete="$('#EditFormDataDialog').modal('show')"/>
+                </h:form>
+
+                <div style="float: left; width: 20%; height: 600px;">
+                    <h:form id="selectionForm">
+                        <div jsf:id="selectionDetail">
+                            <h4>#{msgs.selectOne}</h4>
+                            <p:selectOneListbox style="height: 100%; width: 100%;">
+                                <f:selectItems value="#{adminFormBean.getForms()}" var="form" itemLabel="#{form.mobileFormName}" itemValue="#{form.mobileFormsId}"/>  
+                                <p:ajax event="change" update=":formData:formDataTable :FormReportFields" listener="#{adminFormBean.onFormSelect}"/>
+                            </p:selectOneListbox>
+
+                            <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.createForm}" update=":AdminDashboardFormBottom:createFormDialog" action="#{adminFormBean.newForm}">
+                                <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                <f:passThroughAttribute name="href" value="#createFormDialog"/>
+                            </p:commandLink>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div style="width: 80%; float: left; padding-left: 20px;">
+                    <h4>#{msgs.selectedFormInformation}</h4>
+                    <div>
+                        <ul class="nav nav-tabs">
+                            <li class="active">
+                                <a href="#general" data-toggle="tab">#{msgs.general}</a>
+                            </li>
+                            <li>
+                                <a href='#fields' data-toggle="tab">#{msgs.reportFields}</a>
+                            </li>
+                            <li>
+                                <a href="#jasper" data-toggle="tab">#{msgs.uploadJasper}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade active in" id="general">
+                                <h:form id="formData"> 
+                                    <div jsf:id="formDataTable">
+                                        <input type="hidden" id="mobileFormId" jsf:value="#{adminFormBean.selectedForm.mobileFormsId}"/>
+                                        <table class="table" id="table-1" >
+                                            <tr>
+                                                <th style="width: 20%;">
+                                                    #{msgs.formName}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminFormBean.selectedForm.mobileFormName}"/>
+                                                </td>
+                                                <th style="width: 40%">
+                                                    #{msgs.emailDaily}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.selectedForm.isAutoEmail}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    #{msgs.displayOnDevice}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.selectedForm.displayOnDevice}"/> 
+                                                </td>
+                                                <th>
+                                                    #{msgs.shouldBeSentImmediately}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.selectedForm.sendImmediately}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    #{msgs.active}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.selectedForm.active}"/>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.updateForm}" update=":selectionForm:selectionDetail" action="#{adminFormBean.updateForm()}"/>
+                                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.assignClientsToForm}" update=":ClientSelectForm:ClientSelectModal" action="#{adminFormBean.assignClient}"/>
+                                </h:form>
+                            </div> 
+                            <div class="tab-pane fade " id="jasper">
+                                <div jsf:id="clientsAssigned">
+                                    <h:form id="formDataFormUpload" enctype="multipart/form-data"> 
+                                        <table class="table" id="table-5">
+                                            <tr>
+                                                <th style="width: 20%">
+                                                    #{msgs.uploadJasperReport}
+                                                </th>
+                                                <td>
+                                                    <div id="fileErrorBlock" class="alert alert-danger"></div>
+                                                    <input id="input-21" type="file" multiple="false" data-show-preview="false"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </h:form>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade " id="fields">
+                                <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.addReportField}" action="#{adminFormBean.newMobileFormDataAction()}"/>
+                                <div jsf:id="FormReportFields" style="overflow: auto;">
+                                    <h:form id="FormDataForm">
+                                        <div jsf:id="FormDataTable">
+                                            <table class="table table-striped table-bordered table-highlight" style="width: 100%;" id="table-1">
+                                                <tr>
+                                                    <th style="width: 40%">
+                                                        #{msgs.data}
+                                                    </th>
+                                                    <th style="width: 25%;">
+                                                        #{msgs.dataType}
+                                                    </th>
+                                                    <th style="width: 25%;">
+                                                        #{msgs.defaultmsg}
+                                                    </th>
+                                                    <th style="width: 15%;">
+                                                        #{msgs.actions}
+                                                    </th>
+                                                </tr>
+                                                <ui:repeat value="#{adminFormBean.formData}" var="form">
+                                                    <tr class="clickable-row">
+                                                        <td onclick="javascript:clickFormDetail([{name: 'selectedFormDataId', value: '#{form.mobileFormDataId}'}]);">
+                                                            #{adminFormBean.formLocked ? form.readableLabel : form.dataLabel}
+                                                        </td>
+                                                        <td onclick="javascript:clickFormDetail([{name: 'selectedFormDataId', value: '#{form.mobileFormDataId}'}]);">
+                                                            #{adminFormBean.getFormTypeName(form.dateType)}
+                                                        </td>
+                                                        <td onclick="javascript:clickFormDetail([{name: 'selectedFormDataId', value: '#{form.mobileFormDataId}'}]);">
+                                                            #{form.defaultValue}
+                                                        </td>
+                                                        <td>
+                                                            <p:commandLink action="#{adminFormBean.moveUp(form)}" update=":FormDataForm:FormDataTable">
+                                                                <p:graphicImage url="../images/arrow_up.png"/>
+                                                            </p:commandLink>
+                                                            <p:commandLink action="#{adminFormBean.moveDown(form)}" update=":FormDataForm:FormDataTable">
+                                                                <p:graphicImage url="../images/arrow_down.png"/>
+                                                            </p:commandLink>
+                                                            <p:commandLink action="#{adminFormBean.setFormDataToDelete(form)}" oncomplete="PF('confirmation').show();">
+                                                                <p:graphicImage url="../images/cancel.png"/>
+                                                            </p:commandLink>
+                                                        </td>
+                                                    </tr>
+                                                </ui:repeat>
+                                            </table>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <h:form id="AdminDashboardFormBottom" enctype="multipart/form-data">
+                    <div id="createFormDialog" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="createFormDialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.branches}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table" id="table-1">
+                                            <tr>
+                                                <th>
+                                                    #{msgs.enterTheNameOfTheForm}
+                                                </th>
+                                                <td>
+                                                    <p:inputText value="#{adminFormBean.newForm.mobileFormName}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    #{msgs.shouldThisFormBeMailed}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.newForm.isAutoEmail}"></p:selectBooleanCheckbox>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <p:commandButton value="#{msgs.save}" action="#{adminFormBean.saveForm()}" update=":selectionForm:selectionDetail"/>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="EditFormDataDialog" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="EditFormDataDialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.formData}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table" id="table-1">
+                                            <tr>
+                                                <th>
+                                                    #{msgs.dataName}
+                                                </th>
+                                                <td>
+                                                    <p:inputText readonly="#{adminFormBean.formLocked}" value="#{adminFormBean.newData.dataLabel}" style="width: 100%"/>
+                                                </td>
+                                            </tr>
+                                            <tr jsf:rendered="#{adminFormBean.newData.dateType == 1}">
+                                                <th>
+                                                    #{msgs.defaultValue}
+                                                </th>
+                                                <td>
+                                                    <p:inputText value="#{adminFormBean.newData.defaultValue}" style="width: 100%"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    #{msgs.dataType}
+                                                </th>
+                                                <td>
+                                                    <h:selectOneMenu value="#{adminFormBean.newData.dateType}" style="width: 100%">
+                                                        <p:ajax event="change" update=":AdminDashboardFormBottom:createFormDialog"/>
+                                                        <f:selectItems value="#{adminFormBean.getFormDataTypes()}" var="formdatatypes" itemLabel="#{formdatatypes.mobileFormDataTypeName}" itemValue="#{formdatatypes.mobileFormDataTypeId}"/>  
+                                                    </h:selectOneMenu >
+                                                </td>
+                                            </tr>
+                                            <tr jsf:rendered="#{adminFormBean.newData.dateType == 6}">
+                                                <th>
+                                                    #{msgs.choices}
+                                                </th>
+                                                <td>
+                                                    <div>
+                                                        <h:selectOneListbox value="#{adminFormBean.selectedChoice}" style="width: 100%;">
+                                                            <f:selectItems value="#{adminFormBean.newData.getSelectionData()}"/>
+                                                        </h:selectOneListbox>
+                                                    </div>
+                                                    <div>
+                                                        <div style="float: left;">
+                                                            <p:commandLink action="#{adminFormBean.moveSelectionUp()}" update="EditFormDataDialog">
+                                                                <p:graphicImage url="../images/arrow_up.png"/>
+                                                            </p:commandLink>
+                                                            <p:commandLink action="#{adminFormBean.moveSelectionDown()}" update="EditFormDataDialog">
+                                                                <p:graphicImage url="../images/arrow_down.png"/>
+                                                            </p:commandLink>
+                                                        </div>
+                                                        <div style="float: right;">
+                                                            <p:commandLink action="#{adminFormBean.setupNewSelection()}" oncomplete="$('#AddSelectionForm').modal('show')">
+                                                                <p:graphicImage url="../images/plus.png"/>
+                                                            </p:commandLink>
+                                                            <p:commandLink action="#{adminFormBean.deleteSelection()}" update="EditFormDataDialog">
+                                                                <p:graphicImage url="../images/minus.png"/>
+                                                            </p:commandLink>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    #{msgs.showInSummary}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.newData.showInSummary}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>
+                                                    #{msgs.active}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminFormBean.newData.active}"/>
+                                                </td>
+                                            </tr>
+
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink style="float: right;" styleClass="btn btn-secondary demo-element" value="#{msgs.save}" update=":FormReportFields" action="#{adminFormBean.saveData()}">
+                                            <f:passThroughAttribute name="data-dismiss" value="modal"/>
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p:dialog widgetVar="confirmation">  
+                        #{msgs.thisWillDeleteRecord}
+                        <br/><br/>
+                        <p:commandButton value="#{msgs.yes}" action="#{adminFormBean.deleteFormData()}" oncomplete="PF('confirmation').hide();" update=":FormDataForm:FormDataTable"/>  
+                        <p:commandButton value="#{msgs.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" onclick="PF('confirmation').hide();"/>       
+                    </p:dialog>  
+                </h:form>
+                <h:form id="addSelectionForm">
+                    <div id="AddSelectionForm" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="AddSelectionModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.addSelection}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h:inputText value="#{adminFormBean.addChoice}"/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink value="#{msgs.assign}" styleClass="btn btn-secondary demo-element" update=":AdminDashboardFormBottom:EditFormDataDialog" action="#{adminFormBean.addSelection()}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <h:form id="ClientSelectForm">
+                    <div id="ClientSelectModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="ClientSelectModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.applyToClient}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div style="max-height: 500px; overflow: auto">
+                                            <h:selectManyCheckbox layout="pageDirection" value="#{adminFormBean.selectedClients}">
+                                                <f:selectItems value="#{adminFormBean.clients}" var="client" itemLabel="#{client.clientName}" itemValue="#{client.clientId}"/>
+                                            </h:selectManyCheckbox>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink value="#{msgs.assign}" styleClass="btn btn-secondary demo-element" action="#{adminFormBean.saveClients()}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

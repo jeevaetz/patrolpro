@@ -1,0 +1,1 @@
+casperjs test basictests.js > testresults.txt

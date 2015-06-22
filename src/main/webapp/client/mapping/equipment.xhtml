@@ -1,0 +1,185 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <p:dataTable id="equipmentTable" var="equipment" value="#{equipmentBean.clientEquipment}" paginator="true" rows="15"
+                     selectionMode="single" rowKey="#{equipment.clientEquipmentId}" selection="#{equipmentBean.selectedEquipment}" >
+            <p:ajax event="rowSelect" update=":tabForm:tabView:equipmentDiag"
+                    oncomplete="equipmentDiag.show()" />
+            <p:column headerText="#{msgs.deviceName}" 
+                      id="nickname" 
+                      sortBy="#{equipment.nickname}" 
+                      style="width: 130px;">
+                #{equipment.nickname}
+            </p:column>
+            <p:column headerText="#{msgs.phoneNumber}" 
+                      id="report_type" 
+                      sortBy="#{equipment.phoneNumber}" 
+                      style="width: 120px;">
+                #{equipment.phoneNumber}
+            </p:column>
+            <p:column headerText="#{msgs.mdn}" 
+                      id="mdncol" 
+                      sortBy="#{equipment.mdn}" 
+                      style="width: 115px;">
+                #{equipment.mdn}
+            </p:column>
+            <p:column headerText="#{msgs.issueDate}" 
+                      id="issued" 
+                      sortBy="#{equipment.dateIssued}" 
+                      style="width: 60px;">
+                <h:outputText value="#{equipment.dateIssued}" styleClass="table_cell">
+                    <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.shortDateStyle}" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="#{msgs.actions}"
+                      id="actions"
+                      style="width: 80px">
+                <h:commandLink>
+                    <p:graphicImage url="/design/email_send.png"/>
+                    <p:ajax event="click" update=":tabForm:tabView:messageDialog" listener="#{equipmentBean.message(equipment)}" oncomplete="PF('messageDialog').show();"/>
+                </h:commandLink>
+                <p:graphicImage url="/design/map_search.png"/>
+                <p:commandLink action="#{equipmentBean.setSelectedEquipment(equipment)}" update=":tabForm:tabView:equipmentLogDiag" oncomplete="PF('equipmentLogDiag').show();">
+                    <p:graphicImage url="/design/log.png"/>
+                </p:commandLink>
+                <p:graphicImage rendered="false" url="/design/cancel.png"/>
+            </p:column>
+        </p:dataTable>
+        <h:outputText value="#{msgs.equipmentOnSiteDisclaimer}"/>
+        <p:dialog id="equipmentDiag" modal="true" widgetVar="equipmentDiag" width="450" showEffect="puff" hideEffect="puff" header="#{msgs.equipmentInformation}">
+            <p:panelGrid id="equipDisplay" styleClass="incidentTable">
+                <p:row>
+                    <p:column>
+                        #{msgs.uniqueIdentifier}
+                        <p:inputText id="uniqueId" value="#{equipmentBean.selectedEquipment.uniqueId}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        #{msgs.mdn}
+                        <p:inputText id="mdn" value="#{equipmentBean.selectedEquipment.mdn}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        #{msgs.nickname}
+                        <p:inputText id="nickname" value="#{equipmentBean.selectedEquipment.nickname}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <h:outputText value="#{msgs.returnedDate}" />  
+                        <p:calendar id="returnedDate" showOn="button" value="#{equipmentBean.selectedEquipment.dateReturned}"/>   
+                    </p:column>
+                </p:row>
+            </p:panelGrid  >
+            <p:commandButton value="#{msgs.close}" onclick="PF('equipmentDiag').hide();" style="float: left;"/>
+            <p:commandButton value="#{msgs.save}" ajax="true" actionListener="#{equipmentBean.save}" update=":tabForm:tabView:equipmentTable" oncomplete="PF('equipmentDiag').hide()" style="float: right;"/>
+        </p:dialog>
+
+        <p:dialog id="equipmentLogDiag" modal="true" widgetVar="equipmentLogDiag" width="700" height="400">
+            <p:dataTable id="expenses" value="#{equipmentBean.selectedEquipment.getContacts('2')}" scrollable="true" var="contact" 
+                         rowKey="#{contact.clientEquipmentContactId}">
+
+                <p:column headerText="#{msgs.contactDate}" 
+                          id="exp_amt" 
+                          sortBy="#{contact.contactTime}" 
+                          style="width: 90px;">
+                    <h:outputText value="#{contact.contactTime}">
+                        <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="MM/dd/yy HH:mm">
+                        </f:convertDateTime>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="#{msgs.battery}" 
+                          id="battery" 
+                          sortBy="#{contact.batteryPercentage}" 
+                          style="width: 60px; text-align: center;">
+                    <h:outputText value="#{contact.batteryPercentage / 100}">
+                        <f:convertNumber type="percent"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="#{msgs.signal}" 
+                          id="signal" 
+                          sortBy="#{contact.signalPercentage}" 
+                          style="width: 60px; text-align: center;">
+                    <h:outputText value="#{contact.signalPercentage / 100}">
+                        <f:convertNumber type="percent"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="#{msgs.gpson}" 
+                          id="gps_on" 
+                          sortBy="#{contact.gpson}" 
+                          style="width: 40px; text-align: center;">
+                    <p:graphicImage url="/images/check_ok.png" rendered="#{contact.gpson}"/>
+                    <p:graphicImage url="/images/check_bad.png" rendered="#{!contact.gpson}"/>
+                </p:column>
+
+                <p:column headerText="#{msgs.network}" 
+                          id="network_on" 
+                          sortBy="#{contact.networkLocationOn}" 
+                          style="width: 60px; text-align: center;">
+                    <p:graphicImage url="/images/check_ok.png" rendered="#{contact.networkLocationOn}"/>
+                    <p:graphicImage url="/images/check_bad.png" rendered="#{!contact.networkLocationOn}"/>
+                </p:column>
+
+                <p:column headerText="#{msgs.airplane}" 
+                          id="airplane_on" 
+                          sortBy="#{!contact.inairplanemode}" 
+                          style="width: 60px; text-align: center;">
+                    <p:graphicImage url="/images/check_ok.png" rendered="#{!contact.inairplanemode}"/>
+                    <p:graphicImage url="/images/check_bad.png" rendered="#{contact.inairplanemode}"/>
+                </p:column>
+
+                <p:column headerText="#{msgs.update}" 
+                          id="libraries_on" 
+                          sortBy="#{contact.hasGooglePlayServices}" 
+                          style="width: 60px; text-align: center;">
+                    <p:graphicImage url="/images/check_ok.png" rendered="#{contact.hasGooglePlayServices}"/>
+                    <p:graphicImage url="/images/check_bad.png" rendered="#{!contact.hasGooglePlayServices}"/>
+                </p:column>
+
+                <p:column headerText="#{msgs.on}" 
+                          id="device_on" 
+                          sortBy="#{contact.hasGooglePlayServices}" 
+                          style="width: 40px; text-align: center;">
+                    <p:graphicImage url="/images/check_ok.png" rendered="#{!contact.powerOff}"/>
+                    <p:graphicImage url="/images/check_bad.png" rendered="#{contact.powerOff}"/>
+                </p:column>
+            </p:dataTable>
+        </p:dialog>
+
+        <p:dialog id="messageDialog" widgetVar="messageDialog" modal="true" width="550" height="450" showEffect="puff" hideEffect="puff" header=" #{equipmentBean.messageEquipment.nickname}">
+            <p:scrollPanel style="width:525px;height:350px">  
+                <p:dataGrid var="messaging" id="messagingArea" value="#{equipmentBean.clientMessaging}" columns="1" emptyMessage="" style="border: none;">  
+                    <p:panel>  
+                        <f:facet name="header">
+                            <h:outputText value="#{msgs.sent}" style="margin-right: 8px;"/>
+                            <h:outputText value="#{messaging.dateSent}">
+                                <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                            </h:outputText>
+                            
+                            <h:outputText value="#{messaging.dateReceived}" style="float: right;" rendered="#{messaging.dateReceived != null}">
+                                <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                            </h:outputText>
+                            <h:outputText value="#{msgs.never}" style="float: right;" rendered="#{messaging.dateReceived == null}"/>
+                            <h:outputText value="#{msgs.received}" style="float: right; margin-right: 8px;"/>
+                        </f:facet>
+                        <h:panelGrid columns="1" style="width:100%; text-align: left;">  
+                            <h:outputText style="" value="#{messaging.data}" />  
+                        </h:panelGrid>  
+                    </p:panel>  
+                </p:dataGrid>  
+            </p:scrollPanel> 
+            <p:inputTextarea rows="4" id="sendData" value="#{equipmentBean.messageData}" style="width: 80%;"/><p:commandButton action="#{equipmentBean.sendMessage}" update="messagingArea sendData" style="float: right" value="#{msgs.send}"/>
+        </p:dialog>
+
+    </h:body>
+</html>
+

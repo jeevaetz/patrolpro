@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../templates/client/template.xhtml">
+            <ui:define name="body">     
+                <h:form id="employeeForm">
+                    <p:commandButton  value="Add Guard" action="#{guardsBean.addGuard()}" update=":employeeForm:employeeDiag" oncomplete="PF('employeeDiag').show()"/>
+                    <p:dataTable id="employeesTable" var="employee" value="#{guardsBean.employees}" paginator="true" rows="30"
+                                 selectionMode="single" rowKey="#{employee.employeeId}" styleClass="dashboardTable"  emptyMessage="#{msgs.noDataFound}"
+                                 selection="#{guardsBean.selectedEmployee}" >
+
+                        <p:ajax event="rowSelect" 
+                                update=":employeeForm:employeeDiag" oncomplete="PF('employeeDiag').show()" />
+
+                        <p:column headerText="ID" 
+                                  filterBy="#{employee.employeeId}"
+                                  sortBy="#{employee.employeeId}" 
+                                  id="id" 
+                                  filterMatchMode="contains"
+                                  style="width: 40px;">
+                            #{employee.employeeId}
+                        </p:column>
+                        <p:column headerText="Last Name" 
+                                  filterBy="#{employee.employeeLastName}"
+                                  sortBy="#{employee.employeeLastName}" 
+                                  id="lname" 
+                                  filterMatchMode="contains"
+                                  style="width: 185px;">
+                            #{employee.employeeLastName}
+                        </p:column>
+                        <p:column headerText="First Name" 
+                                  filterBy="#{employee.employeeFirstName}"
+                                  sortBy="#{employee.employeeFirstName}" 
+                                  id="fname" 
+                                  filterMatchMode="contains"
+                                  style="width: 185px;">
+                            #{employee.employeeFirstName}
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:dialog id="employeeDiag" modal="true" widgetVar="employeeDiag" width="600" height="400">
+                        <p:scrollPanel >
+                            <p:panelGrid styleClass="employeeTable" rendered="#{guardsBean.selectedEmployee != null}" id="display" style="width: 100%">
+                                <p:row>
+                                    <p:column style="width: 20%">
+                                        <p:graphicImage value="#{guardsBean.selectedEmployee.getEmployeeImageUrl()}"></p:graphicImage>
+                                    </p:column>
+                                    <p:column>
+                                        <p:panelGrid id="displayData" style="width: 100%; padding: 0px;">
+                                            <p:row>
+                                                <p:column style="width: 40%;">
+                                                    <h:outputText value="First Name" styleClass="table_cell"/>
+                                                </p:column>
+                                                <p:column style="width: 60%; padding: 6px;">
+                                                    <p:inputText value="#{guardsBean.selectedEmployee.employeeFirstName}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="width: 40%;">
+                                                    <h:outputText value="Last Name" styleClass="table_cell"/>
+                                                </p:column>
+                                                <p:column style="width: 60%; padding: 6px;">
+                                                    <p:inputText value="#{guardsBean.selectedEmployee.employeeLastName}"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="width: 40%;">
+                                                    <h:outputText value="Hire Date" styleClass="table_cell"/>
+                                                </p:column>
+                                                <p:column style="width: 60%; padding: 6px;">
+                                                    <p:calendar value="#{guardsBean.selectedEmployee.employeeHireDate}" id="popupHireCal" />
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="width: 40%;">
+                                                    <h:outputText value="Employee Deleted?" styleClass="table_cell"/>
+                                                </p:column>
+                                                <p:column style="width: 60%; padding: 6px;">
+                                                    <p:selectBooleanCheckbox value="#{guardsBean.selectedEmployee.deleted}" id="employeeDeleted" disabled="false"/>
+                                                </p:column>
+                                            </p:row>
+                                            <p:row>
+                                                <p:column style="width: 40%;">
+                                                    <h:outputText value="Term Date" styleClass="table_cell"/>
+                                                </p:column>
+                                                <p:column style="width: 60%; padding: 6px;">
+                                                    <p:calendar value="#{guardsBean.selectedEmployee.employeeTermDate}" id="popupTermCal" />
+                                                </p:column>
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 40%;">
+                                        <h:outputText value="Address Line 1" styleClass="table_cell"/>
+                                    </p:column>
+                                    <p:column style="width: 60%; padding: 6px;">
+                                        <p:inputText style="width: 95%" value="#{guardsBean.selectedEmployee.addressObj.address1}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 40%;">
+                                        <h:outputText value="Address Line 2" styleClass="table_cell"/>
+                                    </p:column>
+                                    <p:column style="width: 60%; padding: 6px;">
+                                        <p:inputText style="width: 95%" value="#{guardsBean.selectedEmployee.addressObj.address2}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column style="width: 40%;">
+                                        <h:outputText value="City" styleClass="table_cell"/>
+                                    </p:column>
+                                    <p:column style="width: 60%; padding: 6px;">
+                                        <p:inputText style="width: 30%" value="#{guardsBean.selectedEmployee.addressObj.city}" />
+                                        <h:outputLabel style="width: 20%;" value="State"/>
+                                        <p:inputText style="width: 10%" value="#{guardsBean.selectedEmployee.addressObj.state}" />
+                                        <h:outputLabel style="width: 20%" value="Zip"/>
+                                        <p:inputText style="width: 20%" value="#{guardsBean.selectedEmployee.addressObj.zip}" />
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+
+                        </p:scrollPanel>
+
+                        <p:commandButton value="Close" style="float: left;" onclick="employeeDiag.close();"/>
+                        <p:commandButton value="Save" style="float: right;" action="#{guardsBean.saveGuard()}" oncomplete="employeeDiag.close();"/>
+                    </p:dialog>
+                </h:form>
+            </ui:define>
+
+            <ui:define name="inner_right_column">
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>
+

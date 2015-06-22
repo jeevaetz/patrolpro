@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../templates/client/template.xhtml">
+            <ui:define name="body">     
+                <h:form id="ReportForm">
+                    <div jsf:id="reportPanel">
+                        <h3>#{msgs.reports}</h3>
+                        <p:selectOneListbox id="reportTable" value="#{reportBean.selectedReport}">
+                            <p:ajax listener="#{reportBean.selectReport}" update=":ReportForm:reportPanel"/>
+                            <f:selectItems value="#{reportBean.reports}" var="report" itemLabel="#{report.reportName}" itemValue="#{report.reportName}"/>  
+                        </p:selectOneListbox >
+                        <ui:repeat value="#{reportBean.selectedReportObj.controlsForReport}" var="reportObj">
+                            <div style="clear: both;">
+                                <h4>#{reportObj.reportLabel}</h4>
+                                <div jsf:rendered="#{reportObj.dataType == ('working_emp_id')}">
+                                    <h:selectOneMenu value="#{reportObj.reportData}">
+                                        <f:selectItem itemLabel="#{msgs.allEmployees}" itemValue="-1" />
+                                        <f:selectItems value="#{reportBean.employees}"  var="employee" itemDescription="#{employee.employeeFullName}" itemLabel="#{employee.employeeFullName}" itemValue="#{employee.employeeId}"/>  
+                                    </h:selectOneMenu>
+                                </div>
+                                <div jsf:rendered="#{reportObj.dataType == ('incident_types')}">
+                                    <h:selectOneMenu value="#{reportObj.reportData}">
+                                        <f:selectItem itemLabel="#{msgs.allIncidents}" itemValue="-1" />
+                                        <f:selectItems value="#{reportBean.incidentTypes.values()}"  var="incidentType" itemDescription="#{incidentType.reportType}" itemLabel="#{incidentType.reportType}" itemValue="#{incidentType.incidentReportTypeId}"/>  
+                                    </h:selectOneMenu>
+                                </div>
+                                <div jsf:rendered="#{reportObj.dataType == ('date')}">
+                                    <div class="input-group date ui-datepicker input-block-level" style="float: left;" data-date-language="#{clientSessionBean.locale.language}" data-date-autoclose="true" data-date-format="#{msgs.javascriptShortDate}" data-provide="datepicker">
+                                        <input jsf:value="#{reportObj.formattedDate}" type="text" class="form-control" placeholder="#{msgs.date}" data-date-format="#{msgs.shortDateStyle}"/>
+                                        <span class="input-group-addon">
+                                            <i class="fa fa-calendar"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </ui:repeat>
+
+                        <br/>
+                        
+                        <p:commandLink style="clear: both;" styleClass="btn btn-secondary demo-element" value="#{msgs.printReport}" action="#{reportBean.selectReport()}"
+                                       oncomplete="javascript:window.open('#{request.contextPath}/GenericReportServlet?report=#{reportBean.selectedReport}&amp;companyId=#{clientSessionBean.companyId}#{clientSessionBean.getAccessibleClientsToUrlParam()}&amp;branchId=#{clientSessionBean.getSelectedBranchId()}&amp;lang=#{clientSessionBean.locale.language}', '_blank')"/>
+
+                        <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.downloadReport}" action="#{reportBean.selectReport()}" rendered="#{reportBean.selectedReportObj.allowCSVDownload()}"
+                                       oncomplete="javascript:window.open('#{request.contextPath}/DownloadJasperReportServlet?report=#{reportBean.selectedReport}&amp;companyId=#{clientSessionBean.companyId}#{clientSessionBean.getAccessibleClientsToUrlParam()}&amp;branchId=#{clientSessionBean.getSelectedBranchId()}&amp;lang=#{clientSessionBean.locale.language}', '_blank')"/>
+
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>
+

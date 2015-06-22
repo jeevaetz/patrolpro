@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en" class="no-js" xmlns="http://www.w3.org/1999/xhtml"
+                             xmlns:ui="http://java.sun.com/jsf/facelets"
+                             xmlns:h="http://java.sun.com/jsf/html"
+                             xmlns:p="http://primefaces.org/ui"> <!--<![endif]-->
+    <h:head>
+        <title>Contact Us - Patrol Pro</title>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="description" content=""/>
+        <meta name="author" content=""/>
+        
+        
+
+        <!-- Google Font: Open Sans -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,800,800italic"/>
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,300,700"/>
+        
+        <!-- Font Awesome CSS -->
+        <link rel="stylesheet" href="./bower_components/fontawesome/css/font-awesome.min.css"/>
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+
+        <!-- App CSS -->
+        <link href="./css/mvpready-landing.css" rel="stylesheet"/>
+        <link href="./css/mvpready-flat.css" rel="stylesheet"/>
+        <link href="./css/animate.css" rel="stylesheet"/>
+        <!-- <link href="./css/custom.css" rel="stylesheet">-->
+
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <link rel="shortcut icon" href="favicon.ico"/>
+    </h:head>
+
+    <body class=" ">
+
+        <div id="wrapper">
+
+            <header class="navbar navbar-inverse" role="banner">
+
+                <div class="container">
+
+                    <div class="navbar-header">
+                        <a href="./" class="navbar-brand navbar-brand-img">
+                            <img src="./img/logo.png" alt="MVP Ready"/>
+                        </a>
+
+                        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <i class="fa fa-bars"></i>
+                        </button>
+                    </div> <!-- /.navbar-header -->
+
+
+                    <nav class="collapse navbar-collapse" role="navigation">
+
+                        <ul class="nav navbar-nav navbar-right mainnav-menu">
+
+                            <li class="">
+                                <a href="./index.html">Home</a>
+                            </li>    
+
+                            <li class="">
+                                <a href="./page-features.html">Features</a>
+                            </li>      
+
+                            <li class="">
+                                <a href="./page-faq.html">FAQ</a>
+                            </li>  
+                            
+                            <li class="">
+                                <a href="./page-signup.xhtml">Request Trial</a>
+                            </li>  
+                             <li class="">
+                                <a href="./page-blog.html">Blog</a>
+                             </li>
+
+                            <li class="active">
+                                <a href="./page-contact.xhtml">Contact</a>
+                            </li>     
+
+                            <li>
+                                <a href="./login.xhtml">Login</a>
+                            </li>    
+
+                        </ul>
+
+                    </nav>
+
+                </div> <!-- /.container -->
+
+            </header>
+
+
+
+            <div class="masthead">
+
+                <div class="container">
+
+                    <h1 class="masthead-subtitle">
+                        Contact Us
+                    </h1>
+
+
+                </div> <!-- /.container -->
+
+            </div> <!-- /.masthead -->
+
+
+
+            <div class="content">
+
+                <div class="container">
+
+                    <div class="layout layout-stack-sm layout-main-left">
+
+                        <div class="col-sm-8 layout-main">
+                            <h4 class="content-title">
+                                <span>Get in Touch</span>
+                            </h4>
+
+                            <p>Interested in trying out Patrol Pro risk free? Have a question not covered on our FAQ? Reach out to us and we will get right back to you.</p>
+
+                            <p>Thanks for your interest!</p>
+
+                            <br/>
+                            <br/>
+
+                            <h4 class="content-title">
+                                <span>Send an Email</span>
+                            </h4>
+
+                            <h:form styleClass="form form-horizontal">
+                                <p:messages autoUpdate="true" showIcon="false"/>
+
+                                <div class="form-group">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <label>Name: <span class="required">*</span></label>
+                                        <p:inputText id="name" required="true" value="#{contactUsBean.name}" styleClass="form-control"/>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <label>Your Email: <span class="required">*</span></label>
+                                        <p:inputText id="email" required="true" value="#{contactUsBean.email}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <label>Phone Number: <span class="required">*</span></label>
+                                        <p:inputText id="phone" required="true" value="#{contactUsBean.phone}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <label>Message: <span class="required">*</span></label>
+                                        <p:inputTextarea cols="40" rows="6" id="message" required="true" value="#{contactUsBean.message}" styleClass="form-control"/>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <p:commandLink styleClass="btn btn-primary" action="#{contactUsBean.sendEmail()}" onsuccess="javascript:alert('Thank you for contacting us, we will be reaching out to you shortly.');">Submit Message</p:commandLink>
+                                    </div>
+                                </div>
+
+
+                            </h:form>
+
+                        </div> <!-- /.col -->
+
+                        <div class="col-sm-4 layout-sidebar">
+                            <h4 class="content-title">
+                                <span>Office Location</span>
+                            </h4>
+
+                            <ul class="icons-list">
+                                <li>
+                                    <i class="icon-li fa fa-map-marker"></i>
+                                    1616 Gateway Blvd. <br/>
+                                    Suite 100 <br/>
+                                    Richardson, TX 75080
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-phone"></i>
+                                    +1 (513) 580-4357
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-envelope"></i>
+                                    <a href="mailto:rich@patrolpro.com">rich@patrolpro.com</a>
+                                </li>
+                            </ul>
+
+                            <br/><br/>
+
+                            <h4 class="content-title">
+                                <span>Business Hours</span>
+                            </h4>
+
+                            <ul class="icons-list">
+                                <li>
+                                    <i class="icon-li fa fa-clock-o"></i>
+                                    Monday to Friday - 8am to 5pm (CST)
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-clock-o"></i>
+                                    Saturday - Closed
+                                </li>
+
+                                <li>
+                                    <i class="icon-li fa fa-clock-o"></i>
+                                    Sunday - Closed
+                                </li>
+                            </ul>
+
+                        </div> <!-- /.col -->
+
+                    </div> <!-- /.row -->
+
+                </div> <!-- /.container -->   	
+
+            </div> <!-- /.content -->
+
+
+        </div> <!-- /#wrapper -->
+
+        <footer class="footer">
+
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-sm-3">
+                        <h4 class="content-title">
+                            <span>Patrol Pro</span>
+                        </h4>        
+
+                        Security guard communication and reporting has never been easier with the Patrol Pro software for handheld Android devices.Install Patrol Pro on any Android device and reports, pictures, recordings, barcode scanning, post instructions, and GPS tracking are available real time.
+                    </div> <!-- /.col -->
+
+
+                    <div class="col-sm-3">
+
+                        <h4 class="content-title">
+                            <span>Twitter Feed</span>
+                        </h4>
+
+                        <div id="tweets"></div>
+                    </div> <!-- /.col -->
+
+
+                    <div class="col-sm-3">
+
+                        <h4 class="content-title">
+                            <span>Stay Connected</span>
+                        </h4>
+
+                        <p>Stay Connected by subscribing to our email list on the right side and hear about new features as they are introduced.</p>
+
+                        <br/>
+
+                        
+
+                    </div> <!-- /.col -->
+
+
+                    <div class="col-sm-3">
+
+                        <h4 class="content-title">
+                            <span>Stay Updated</span>
+                        </h4>
+
+                        <p>Get emails about new theme launches &amp;  future updates.</p>
+
+                        <form action="/" class="form">
+
+                            <div class="form-group">
+                                <!-- <label>Email: <span class="required">*</span></label> -->
+                                <input class="form-control" id="newsletter_email" name="newsletter_email" type="text" value="" required="" placeholder="Email Address"/>
+                            </div> <!-- /.form-group -->
+
+                            <div class="form-group">
+                                <button class="btn btn-transparent">Subscribe Me</button>
+                            </div> <!-- /.form-group -->
+
+                        </form>
+
+                    </div> <!-- /.col -->
+
+                </div> <!-- /.row -->
+
+            </div> <!-- /.container -->
+
+        </footer>
+
+        <footer class="copyright">
+            <div class="container">
+
+                <div class="row">
+
+                    <div class="col-sm-12">
+                        <p>Copyright 2014 Patrol Pro.</p>
+                    </div> <!-- /.col -->
+
+                </div> <!-- /.row -->
+
+            </div>
+        </footer>
+
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="./js/libs/jquery-1.10.2.min.js"></script>
+        <script src="./js/libs/bootstrap.min.js"></script>
+
+        <script src="./js/plugins/timeago/jquery.timeago.js"></script>
+        <script src="./js/plugins/tweetable/tweetable.jquery.min.js"></script>
+
+        <!--[if lt IE 9]>
+        <script src="./js/libs/excanvas.compiled.js"></script>
+        <![endif]-->
+
+        <!-- App JS -->
+        <script src="./js/mvpready-core.js"></script>
+        <script src="./js/mvpready-landing.js"></script>
+
+
+    </body>
+</html>

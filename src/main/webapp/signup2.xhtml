@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="/templates/template.xhtml">
+            <ui:define name="title"> 
+                Signup
+            </ui:define>
+            <ui:define name="javascript"> 
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('#u1506').css('display', 'none');
+                    });
+                </script>
+            </ui:define>
+            <ui:define name="body">     
+                <h:form id="loginForm">
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="true" globalOnly="true" id="messages"/>
+                    <p:panelGrid styleClass="signupPanel" id="signupPanel">
+                        <p:row>
+                            <p:column>
+                                User First Name
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.rootUser.userFirstName}" id="firstName"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:messages for="firstName" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                User Last Name
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.rootUser.userLastName}" id="lastName"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:messages for="lastName" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                User Email
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.rootUser.userEmail}" id="email"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:messages for="email" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                User Login
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.rootUser.userLogin}" id="login"/>
+                                
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:messages for="login" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                User Password
+                            </p:column>
+                            <p:column>
+                                <p:password styleClass="fullTxt" value="#{signupBean.rootUser.userPassword}" id="password"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:messages for="password" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Confirm Password
+                            </p:column>
+                            <p:column>
+                                <p:password styleClass="fullTxt" value="#{signupBean.passwordConfirmation}" id="passwordConf"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <p:messages for="passwordConf" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:commandButton style="float: right;" value="Next" action="#{signupBean.setupUserAndCompany}"/>
+                </h:form>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>
+

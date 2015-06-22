@@ -1,0 +1,133 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pass="http://java.sun.com/jsf/passthrough"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../../templates/client/admin/admin_template.xhtml">
+            <ui:define name="body">   
+
+                <div jsf:id="reportPanel">
+                    <h:form id="ReportFormTop">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />  
+                        <h:outputText value="#{msgs.dataType}"/><br/>
+                        <h:selectOneMenu value="#{adminReportBean.selectedValue}">
+                            <p:ajax listener="#{adminReportBean.selectReport}" update=":reportPanel"/>
+                            <f:selectItem itemLabel="#{msgs.selectOne}" itemValue=""/>
+                            <f:selectItem itemLabel="#{msgs.officerDailyReport}" itemValue="ODR"/>
+                            <f:selectItem itemLabel="#{msgs.reports}" itemValue="Reports"/>
+                        </h:selectOneMenu>
+                    </h:form>
+                    <h:form>
+                        <p:remoteCommand name="clickODRTable" action="#{adminReportBean.onSelectTable}" update=":ODRDiagForm:odrDiag" oncomplete="PF('odrDiag').show()"/>
+                    </h:form>
+                    <div jsf:id="mainPanel">
+                        <div jsf:rendered="#{adminReportBean.selectedValue == 'ODR'}">
+                            <h:form id="ODRForm">
+                                <!--<p:poll interval="30" update="odrTable" /> -->
+                                <div jsf:id="odrTable">
+                                    <table class="table table-striped table-bordered table-highlight" id="table-1">
+                                        <tr>
+                                            <th>
+                                                <h4>#{msgs.client}</h4>
+                                            </th>
+                                            <th style="width: 120px;">
+                                                <h4>#{msgs.login}</h4>
+                                            </th>
+                                            <th style="width: 120px;">
+                                                <h4>#{msgs.logout}</h4>
+                                            </th>
+                                            <th style="width: 120px;">
+                                                <h4>#{msgs.device}</h4>
+                                            </th>
+                                            <th>
+                                                <h4>#{msgs.employee}</h4>
+                                            </th>
+                                            <th style="width: 80px;">
+                                                <h4>#{msgs.actions}</h4>
+                                            </th>
+                                        </tr>
+                                        <ui:repeat value="#{adminReportBean.logInLogOut}" var="logInOut">
+                                            <tr class="clickable-row">
+                                                <td onclick="javascript:clickODRTable([{name: 'logInOut', value: '#{logInOut.ODRIds}'}]);">
+                                                    #{logInOut.client.clientName}
+                                                </td>
+                                                <td onclick="javascript:clickODRTable([{name: 'logInOut', value: '#{logInOut.ODRIds}'}]);">
+                                                    <h:outputText value="#{logInOut.startDate}">
+                                                        <f:convertDateTime timeZone="#{sessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                                                    </h:outputText> 
+                                                </td>
+                                                <td onclick="javascript:clickODRTable([{name: 'logInOut', value: '#{logInOut.ODRIds}'}]);">
+                                                    <h:outputText value="#{logInOut.endDate}">
+                                                        <f:convertDateTime timeZone="#{sessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                                                    </h:outputText> 
+                                                </td>
+                                                <td onclick="javascript:clickODRTable([{name: 'logInOut', value: '#{logInOut.ODRIds}'}]);">
+                                                    #{logInOut.deviceName}
+                                                </td>
+                                                <td onclick="javascript:clickODRTable([{name: 'logInOut', value: '#{logInOut.ODRIds}'}]);">
+                                                    #{logInOut.employee.employeeFullName}
+                                                </td>
+                                                <td>
+                                                    <p:graphicImage id="printer" url="/images/print.png" onclick="javascript:window.open('#{request.contextPath}/client/printodrservlet?odrReportId=#{logInOut.getODRIds()}&amp;companyId=#{sessionBean.companyId}&amp;windowId=#{sessionBean.conversation.id}&amp;lang=#{sessionBean.locale.language}', '_blank');"/>
+                                                </td>
+                                            </tr>
+                                        </ui:repeat>
+                                    </table>
+                                </div>
+                            </h:form>
+                            <ui:include src="/client/facelets/odr_display.xhtml">
+                                <ui:param name="sBean" value="#{sessionBean}"/>
+                            </ui:include>
+                        </div>
+
+                        <h:form id="ReportForm">
+                            <div jsf:id="reportPanel" jsf:rendered="#{adminReportBean.selectedValue == 'Reports'}">
+                                <h4>#{msgs.selectedReport}</h4>
+                                <h:selectOneMenu value="#{adminReportBean.selectedReport}" style="width: 100%; margin-bottom: 30px;">
+                                    <p:ajax listener="#{adminReportBean.selectReport}" update=":reportPanel"/>
+                                    <f:selectItems value="#{reportBean.reports}" var="report" itemLabel="#{report.reportName}" itemValue="#{report.reportName}"/>  
+                                </h:selectOneMenu>
+
+                                <ui:repeat value="#{adminReportBean.selectedReportObj.controlsForReport}" var="reportObj">
+                                    <div style="clear: both;">
+                                        <h4>#{reportObj.reportLabel}"</h4>
+                                        <div jsf:rendered="#{reportObj.dataType == ('working_emp_id')}">
+                                            <h:selectOneMenu value="#{reportObj.reportData}">
+                                                <f:selectItem itemLabel="#{msgs.allEmployees}" itemValue="-1" />
+                                                <f:selectItems value="#{adminReportBean.employees}"  var="employee" itemDescription="#{employee.employeeFullName}" itemLabel="#{employee.employeeFullName}" itemValue="#{employee.employeeId}"/>  
+                                            </h:selectOneMenu>
+                                        </div>
+                                        <div jsf:rendered="#{reportObj.dataType == ('incident_types')}">
+                                            <h:selectOneMenu value="#{reportObj.reportData}">
+                                                <f:selectItem itemLabel="#{msgs.allIncidents}" itemValue="-1" />
+                                                <f:selectItems value="#{adminReportBean.incidentTypes.values()}"  var="incidentType" itemDescription="#{incidentType.reportType}" itemLabel="#{incidentType.reportType}" itemValue="#{incidentType.incidentReportTypeId}"/>  
+                                            </h:selectOneMenu>
+                                        </div>
+                                        <div jsf:rendered="#{reportObj.dataType == ('date')}">
+                                            <div jsf:rendered="#{reportObj.dataType == ('date')}">
+                                                <div class="input-group date ui-datepicker input-block-level" style="float: left;" data-date-language="#{clientSessionBean.locale.language}" data-date-autoclose="true" data-date-format="#{msgs.javascriptShortDate}" data-provide="datepicker">
+                                                    <input jsf:value="#{reportObj.formattedDate}" type="text" class="form-control" placeholder="#{msgs.date}" data-date-format="#{msgs.shortDateStyle}"/>
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-calendar"/>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ui:repeat>
+                                <p:commandButton value="#{msgs.printReport}" action="#{adminReportBean.selectReport()}" oncomplete="javascript:window.open('#{request.contextPath}/GenericReportServlet?report=#{reportBean.selectedReport}&amp;companyId=#{sessionBean.companyId}#{sessionBean.getAccessibleClientsToUrlParam()}&amp;branchId=#{sessionBean.getSelectedBranchId()}&amp;lang=#{sessionBean.locale.language}', '_blank')"/>
+                            </div>
+
+                        </h:form>
+                    </div>
+                </div>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="2.1"
+              xmlns="http://java.sun.com/xml/ns/javaee" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd">
+    <application>
+        <locale-config>
+            <default-locale>en_US</default-locale>
+            <supported-locale>de</supported-locale>
+            <supported-locale>en_GB</supported-locale>
+            <supported-locale>fr</supported-locale>
+            <supported-locale>lt</supported-locale>
+        </locale-config>
+        <action-listener>org.primefaces.application.DialogActionListener</action-listener>
+        <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+        <view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+        <resource-bundle>
+            <base-name>com.patrolpro.resources.PatrolPro</base-name>
+            <var>msgs</var>
+        </resource-bundle>
+    </application>
+
+    <navigation-rule>
+        <from-view-id>*</from-view-id>
+        <navigation-case>
+            <from-outcome>loggedin</from-outcome>
+            <to-view-id>/client/dashboard.html</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>loggedOut</from-outcome>
+            <to-view-id>/login.html</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>loginUser</from-outcome>
+            <to-view-id>/client/admin/admin_dashboard.html</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>sentEmail</from-outcome>
+            <to-view-id>/signup_confirmation.xhtml</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>sentContactEmail</from-outcome>
+            <to-view-id>/contact_confirmation.xhtml</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>loggedOut</from-outcome>
+            <to-view-id>/login.html</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>saved</from-outcome>
+            <to-view-id>/signup2.html</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/client/images*</from-view-id>
+        <navigation-case>
+            <from-outcome>*</from-outcome>
+            <to-view-id>/images/</to-view-id>
+            <redirect>true</redirect>
+        </navigation-case>
+    </navigation-rule>
+
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.FileUploadRenderer</renderer-type>
+            <renderer-class>com.patrolpro.servlet.utils.FileUploadRenderer</renderer-class>
+        </renderer>
+    </render-kit>
+</faces-config>

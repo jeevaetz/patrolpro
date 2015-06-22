@@ -1,0 +1,96 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body> 
+
+        <p:panel style="float: left;"> 
+            Date
+            <br/>
+            <p:calendar id="dateSelect" widgetVar="dateSelect" value="#{mapBean.selectedDate}"/>
+        </p:panel>
+
+        <p:commandButton style="margin-top: 20px; margin-left: 40px;" ajax="true" update="mapHeader" value="Refresh Map" actionListener="#{mapBean.refreshMap}" onclick="javascript:showLoadingBar('Loading Map - Please Wait')" onstart="javascript:loadMapCoordinates();loadBarcodeCoordinatesOnMap();"/>
+        <p:selectBooleanCheckbox value="#{mapBean.showAllPoints}">
+            <f:ajax listener="#{mapBean.refreshMap}" />
+        </p:selectBooleanCheckbox>
+        <h:outputText value="Load all map points"/>
+        <span id="loadingImageSpan" style="color: white;"></span>
+
+        <p:panel style="clear: both;" id="mappingPanel">
+            <p:panel id="mapHeader">
+                <h3>Map for 
+                    <h:outputText value="#{mapBean.selectedDate}">
+                        <f:convertDateTime type="date" pattern="MM/dd/yyyy"/>
+                    </h:outputText>
+                    @
+                    <span name="currentTime"/>
+                </h3>
+            </p:panel>
+
+            <div id="poly_map" style="width: 500px; height: 420px;">
+
+            </div>
+
+            <p:panel id="timeLineContainer" styleClass="calendarContainer">
+                <select id="timeLine" name="timeLine" onchange="javascript:changeMap();" style="display: none;">
+                    <c:forEach items="#{mapBean.timeLineSteps}" var="timeLine">
+                        <option>#{timeLine}</option>
+                    </c:forEach>
+                </select>
+            </p:panel>
+        </p:panel>
+
+
+
+        <p:panel styleClass="mapControls" id="mapControls">
+            <p:commandLink>
+                <p:graphicImage url="/images/seek-back.png" onclick="javascript:rewind();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/arrow-back.png" onclick="javascript:back();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/stop.png" onclick="javascript:stop();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/arrow-forward.png" onclick="javascript:play();"/>
+            </p:commandLink>
+            <p:commandLink>
+                <p:graphicImage url="/images/arrows-seek-forward.png" onclick="javascript:forward();"/>
+            </p:commandLink>
+        </p:panel>
+
+        <script type="text/javascript">
+            var po = org.polymaps;
+
+            var svg = po.svg("svg");
+
+            var map = po.map()
+            .container(document.getElementById("poly_map").appendChild(svg))
+            .add(po.interact())
+            .zoom(15.6)
+            .center({"lat":#{mapBean.latitude}, "lon":#{mapBean.longitude}})
+            .add(po.hash());
+
+            //map.add(po.image().url(po.url("http://acetate.geoiq.com/tiles/terrain/{Z}/{X}/{Y}.png")))
+    
+            map.add(po.layer(overlay).tile(false));
+            
+            //var svg = document.querySelector("#poly_map");
+            svg.setAttribute("width", 500);
+            svg.setAttribute("height", 420);
+            map.add(po.image()
+            .url(po.url("http://{S}tile.cloudmade.com"
+                  + "/1a1b06b230af4efdbb989ea99e9841af" 
+                  + "/998/256/{Z}/{X}/{Y}.png")
+                 .hosts(["a.", "b.", "c.", ""])));
+
+            map.add(po.compass()
+            .pan("none"));
+        </script>
+    </h:body>
+</html>
+

@@ -1,0 +1,46 @@
+html
+{
+	min-height: 100%;
+	min-width: 100%;
+}
+
+.ui-slider-filled-in {
+    display:inline-block;
+    width:3px;
+    background:white;
+    height:12px;
+    position:absolute;
+    top:0px;
+}
+
+.ui-slider-tick {
+    display:inline-block;
+    width:1px;
+    background:grey;
+    height:7px;
+    position:absolute;
+    top:13px;
+}
+
+.ui-slider-label {
+    display:inline-block;
+    width:30px;
+    margin-left: -10px;
+    height:7px;
+    position:absolute;
+    font-size: 11px !important;
+    top:22px;
+}
+
+.noPaddingClass {
+    padding: 0px !important;
+    margin: 0px !important;
+    border-style: none !important;
+}
+
+.noPaddingClass .ui-panel-content {
+    padding: 0px !important;
+    margin: 0px !important;
+    border-style: none !important;
+}
+

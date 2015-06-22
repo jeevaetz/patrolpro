@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  
+      xmlns:h="http://java.sun.com/jsf/html"  
+      xmlns:f="http://java.sun.com/jsf/core"  
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      >
+    <h:head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <link rel="stylesheet" type="text/css" href="${facesContext.externalContext.requestContextPath}/css/site_global.css?3447303992"/>
+        <link rel="stylesheet" type="text/css" href="${facesContext.externalContext.requestContextPath}/css/index.css?4370595962"/>
+        <link rel="stylesheet" type="text/css" href="${facesContext.externalContext.requestContextPath}/css/patrolpro.css?38899758472"/>
+
+        <link rel="stylesheet" media="screen,projection" type="text/css" href="${facesContext.externalContext.requestContextPath}/css/ui.slider.extras.css?2342" />
+
+        <script type="text/javascript" src="${facesContext.externalContext.requestContextPath}/js/jquery-ui-1.8.22.custom.min.js?23423"></script>
+        <script type="text/javascript" src="${facesContext.externalContext.requestContextPath}/js/selectToUISlider.jQuery.js?234"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-2022-KR"/>
+        <title>Patrol Pro</title>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.table tr').bind('click', function () {
+                    var href = $(this).find("a").attr("href");
+                    if (href) {
+                        window.location = href;
+                    }
+                });
+            });
+
+            function showLoadingBar(text) {
+                document.getElementById("loadingImageSpan").innerHTML = '<img src="${facesContext.externalContext.requestContextPath}/images/loading26.gif"/>' + text;
+                return true;
+            }
+
+            function hideLoadingBar() {
+                $('#loadingImageSpan').html('');
+            }
+
+            $(document).ready(function () {
+                $('a').each(function (index) {
+                    var me = $(this);
+                    var href = me.attr('href');
+                    me.attr('href', '#');
+                    me.click(function () {
+                        if (href.indexOf('javascript') == -1) {
+                            if (href.length != 1) {
+                                $('#dialog-wait').html('<span style="color: white; vertical-align: middle;"><img src="${facesContext.externalContext.requestContextPath}/images/loading26.gif"/>Loading, Please wait...</span>');
+                                $('#dialog-wait').dialog({
+                                    modal: true,
+                                    dialogClass: 'waitDialog',
+                                    height: 70,
+                                    width: 200
+                                });
+                            }
+                        }
+                        document.location = href;
+                    });
+                });
+            });
+        </script>
+
+        <script type="text/javascript">
+            document.documentElement.className = 'js';
+        </script>
+
+        <ui:insert name="javascript"/>
+    </h:head>
+
+    <body>
+        <p:dialog id="loadingDialog" showHeader="false" minHeight="80" minWidth="140" height="80" width="140" widgetVar="loading" >
+            <span id="loadingImage"></span><span style="vertical-align:middle; height: 100%;">Loading...</span>
+        </p:dialog>
+        <div class="clearfix" id="page"><!-- group -->
+            <div class="grpelem" id="u1540"><!-- image -->
+                <img id="u1540_img" src="images/black-carbon-fiber2.jpg" alt="" width="916" height="492"/>
+            </div>
+            <div class="grpelem" id="u126"><!-- image -->
+                <img id="u126_img" src="images/horiz-metal-bar.jpg" alt="" width="916" height="49"/>
+            </div>
+            <div class="rounded-corners clearfix grpelem" id="u104"><!-- group -->
+                <div class="clearfix grpelem" id="u105-4"><!-- content -->
+                    <ui:insert name="title"/>
+                    <ui:insert name="menu"/>
+                </div>
+            </div>
+            <div class="grpelem" id="u974"><!-- image -->
+                <img id="u974_img" src="${facesContext.externalContext.requestContextPath}/client/images/patrolpro-client-banner-1000.jpg" alt="" width="916" height="101"/>
+            </div>
+            <div class="rounded-corners clearfix grpelem" id="u1059"><!-- column -->
+                <ui:insert name="body"/>
+
+                <div id="col" class="noprint">
+                    <div id="col-in">
+                        <ui:insert name="right_column"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grpelem" id="u1560"><!-- image -->
+                <img id="u1560_img" src="${facesContext.externalContext.requestContextPath}/client/images/horiz-metal-bar.jpg" alt="" width="916" height="49"/>
+            </div>
+            <div class="grpelem" id="u1545"><!-- image -->
+                <img id="u1545_img" src="${facesContext.externalContext.requestContextPath}/client/images/banner-back2.jpg" alt="" width="916" height="59"/>
+            </div>
+            <div class="clearfix grpelem" id="u308-9"><!-- content -->
+                <p id="u308-4"><span id="u308-2">Patrol Pro&nbsp; &nbsp; </span>1616 Gateway Blvd., Suite 100 , Richardson, Tx 75080&nbsp; &nbsp; 214&#45;615&#45;9102</p>
+                <p>&nbsp;</p>
+            </div>
+            <div class="grpelem" id="u1506"><!-- image -->
+                <img id="u1506_img" src="${facesContext.externalContext.requestContextPath}/client/images/badge1.png" alt="" width="247" height="217"/>
+            </div>
+            <div class="grpelem" id="u1568"><!-- rasterized frame -->
+                <img id="u1568_img" src="${facesContext.externalContext.requestContextPath}/client/images/scan-eye-7037296-u1568.png" alt="" width="235" height="411"/>
+            </div>
+        </div>
+
+        <div id="dialog-wait"></div>
+
+    </body>
+</html>

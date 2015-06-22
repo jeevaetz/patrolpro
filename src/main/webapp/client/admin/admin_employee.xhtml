@@ -1,0 +1,337 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pass="http://java.sun.com/jsf/passthrough"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../../templates/client/admin/admin_template.xhtml">
+            <ui:param name="activeBean" value="#{adminEmployeeBean}"/>
+            
+            <ui:define name="javascript">
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/css/fileinput.min.css"/>
+                <script type="text/javascript" src="${facesContext.externalContext.requestContextPath}/js/fileinput.min.js"></script>
+
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/select2/select2.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/jquery-icheck/skins/minimal/_all.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-3-timepicker/css/bootstrap-timepicker.css"/>
+                <link rel="stylesheet" href="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-jasny/dist/css/jasny-bootstrap.css"/>
+                
+                <script type="text/javascript">
+                    function parseControls() {
+                        jQuery('.ui-datepicker').datepicker({
+                                endDate: '-16y',
+                                autoclose: 'true',
+                                language: '#{sessionBean.locale.language}',
+                                format: '#{msgs.javascriptShortDate}' 
+                            });
+                    }
+                </script>
+                
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#input-21").fileinput({
+                            uploadAsync: false,
+                            previewFileType: "image",
+                            browseClass: "btn btn-success",
+                            browseLabel: "Pick Image",
+                            browseIcon: '<i class="glyphicon glyphicon-picture"></i>',
+                            removeClass: "btn btn-danger",
+                            removeLabel: "Delete",
+                            removeIcon: '<i class="glyphicon glyphicon-trash"></i>',
+                            uploadClass: "btn btn-info",
+                            uploadLabel: "Upload",
+                            uploadExtraData: function () {
+                                return {
+                                    employeeId: document.getElementById('employeeId').value
+                                };
+                            },
+                            uploadUrl: "${facesContext.externalContext.requestContextPath}/UploadFileServlet?beanName=adminEmployeeBean&amp;companyId=#{sessionBean.selectedCompany.compId}",
+                            uploadIcon: '<i class="glyphicon glyphicon-upload"></i>',
+                        });
+                
+                        $("#input-21").on('fileuploaded', function(event, data, previewId, index) { 
+                            updateForm();
+                            $("img[id$='empImage']").attr("src", $("img[id$='empImage']").attr("src") + '?' + new Date().getTime());
+                        });
+                
+                        $(function() {
+                            $("#employeeDOB").datepicker();
+                        });
+
+                        $('#openBtn').click(function () {
+                            $('#myModal').modal({show: true})
+                        });
+
+
+                        $('.modal').on('hidden.bs.modal', function (event) {
+                            $(this).removeClass('fv-modal-stack');
+                            $('body').data('fv_open_modals', $('body').data('fv_open_modals') - 1);
+                        });
+
+
+                        $('.modal').on('shown.bs.modal', function (event) {
+                            // keep track of the number of open modals
+                            if (typeof ($('body').data('fv_open_modals')) == 'undefined') {
+                                $('body').data('fv_open_modals', 0);
+                            }
+
+                            // if the z-index of this modal has been set, ignore.
+                            if ($(this).hasClass('fv-modal-stack')) {
+                                return;
+                            }
+
+                            $(this).addClass('fv-modal-stack');
+                            $('body').data('fv_open_modals', $('body').data('fv_open_modals') + 1);
+                            $(this).css('z-index', 1040 + (10 * $('body').data('fv_open_modals')));
+                            $('.modal-backdrop').not('.fv-modal-stack')
+                                    .css('z-index', 1039 + (10 * $('body').data('fv_open_modals')));
+
+                            $('.modal-backdrop').not('fv-modal-stack')
+                                    .addClass('fv-modal-stack');
+                        });
+                    });
+                </script>
+            </ui:define>
+            <ui:define name="body">  
+                <h:form>
+                    <p:remoteCommand name="updateForm" action="#{adminEmployeeBean.dummyAction()}" update=":AdminDashboardForm:EmployeeInfoModel" />
+                </h:form>
+                <h:form id="UploadForm">
+                    <div id="ImageModel" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="ImageUploadModel">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">Upload Image</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input id="input-21" type="file" accept="image/*" multiple="false"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <h:form id="AdminDashboardFormTop">
+
+                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.addEmployee}" update=":AdminDashboardForm:EmployeeInfoModel" action="#{adminEmployeeBean.addNew}">
+                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                        <f:passThroughAttribute name="href" value="#EmployeeModal"/>
+                    </p:commandLink>
+
+                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.download}" update=":AdminDashboardForm:EmployeeInfoModel" onclick="javascript: window.open('#{facesContext.externalContext.requestContextPath}/GenerateEmployeeFileServlet?companyId=#{sessionBean.companyId}')"/>
+
+                    <div class="form-group" style="float: right;">
+                        <label class="parsley-error">
+                            <input type="checkbox" class="parsley-validated" jsf:value="#{adminEmployeeBean.showDeleted}">
+                                <p:ajax event="change" update=":AdminDashboardFormTop:employeeTableDiv" listener="#{adminEmployeeBean.selectBranch}" />
+                            </input>
+                            #{msgs.showDeletedEmployees}
+                        </label>
+                    </div>
+
+                    <p:remoteCommand name="clickTable" action="#{adminEmployeeBean.loadEmployeeInfo}" update=":AdminDashboardForm:EmployeeInfoModel" oncomplete="$('#EmployeeModal').modal('show');javascript:parseControls();">
+
+                    </p:remoteCommand>
+
+                    <div jsf:id="employeeTableDiv">
+                        <table class="table table-striped table-bordered table-highlight" id="table-1">
+                            <tr>
+                                <th style="width: 10%">
+                                    <h4>#{msgs.employeeId}</h4>
+                                </th>
+                                <th>
+                                    <h4>#{msgs.lastName}</h4>
+                                </th>
+                                <th>
+                                    <h4>#{msgs.firstName}</h4>
+                                </th>
+                                <th>
+                                    <h4>#{msgs.address}</h4>
+                                </th>
+                            </tr>
+                            <ui:repeat value="#{adminEmployeeBean.employees}" var="employee">
+                                <tr class="clickable-row" onclick="javascript:clickTable([{name: 'employeeId', value: '#{employee.employeeId}'}]);">
+                                    <td>
+                                        #{employee.employeeScanId == null || employee.employeeScanId.length() == 0 ? employee.employeeId : employee.employeeScanId}
+                                    </td>
+                                    <td>
+                                        #{employee.employeeLastName}
+                                    </td>
+                                    <td>
+                                        #{employee.employeeFirstName}
+                                    </td>
+                                    <td>
+                                        #{employee.address1} #{employee.city} #{employee.state} #{employee.zip}
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </div>
+                </h:form>
+                <h:form id="AdminDashboardForm">
+                    <div id="EmployeeModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog" style="width: 50%;">
+                            <div jsf:id="EmployeeInfoModel">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.employeeInformation}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="employeeId" jsf:value="#{adminEmployeeBean.selectedEmployee.employeeId}"/>
+                                        <table class="table" id="table-1">
+                                            <tr>
+                                                <th rowspan="5" style="width: 20%;">
+                                                    <a href="#{adminEmployeeBean.selectedEmployee.getEmployeeImageUrl(sessionBean.selectedCompany.compDB)}" target="_blank">
+                                                        <p:graphicImage id="empImage" style="width:100%" value="#{adminEmployeeBean.selectedEmployee.getEmployeeImageUrl(sessionBean.selectedCompany.compDB)}"/>
+                                                    </a>
+                                                    <p:commandLink style="margin: auto;" styleClass="btn btn-secondary demo-element" value="#{msgs.uploadImage}">
+                                                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                                                        <f:passThroughAttribute name="href" value="#ImageModel"/>
+                                                    </p:commandLink>
+                                                </th>
+                                                <th style="width: 15%;">
+                                                    #{msgs.firstName}
+                                                </th>
+                                                <td style="width: 25%;">
+                                                    <p:inputText binding="#{adminEmployeeBean.employeeFirstNameTxt}" style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeFirstName}" id="firstName"/>
+                                                    <p:message for="firstName" showDetail="true" showSummary="false"/>
+                                                </td>
+                                                <th style="width: 15%">
+                                                    #{msgs.lastName}
+                                                </th>
+                                                <td style="width: 25%;">
+                                                    <p:inputText binding="#{adminEmployeeBean.employeeLastNameTxt}" style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeLastName}" id="lastName"/>
+                                                    <p:messages for="lastName" showDetail="true" showSummary="false" autoUpdate="true"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 15%" jsf:rendered="#{sessionBean.companyId != 2}">
+                                                    #{msgs.ssn}
+                                                </th>
+                                                <td jsf:rendered="#{sessionBean.companyId != 2}">
+                                                    <p:inputText binding="#{adminEmployeeBean.employeeSSN}" style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeSsn}" id="ssnBirth"/>
+                                                    <p:messages for="ssnBirth" showDetail="true" showSummary="false" autoUpdate="true"/>
+                                                </td>
+                                                <th style="width: 15%">
+                                                    #{msgs.dob}
+                                                </th>
+                                                <td>
+                                                    <div class="input-group date ui-datepicker" data-date-language="#{sessionBean.locale.language}" data-date-autoclose="true" data-date-format="#{msgs.javascriptShortDate}" data-provide="datepicker">
+                                                        <input jsf:binding="#{adminEmployeeBean.employeeDOB}" type="text" class="form-control" placeholder="#{msgs.dob}" data-date-format="#{msgs.shortDateStyle}"/>
+                                                        <span class="input-group-addon">
+                                                            <i class="fa fa-calendar"/>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td colspan="2" jsf:rendered="#{sessionBean.companyId == 2}"/>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 15%">
+                                                    #{msgs.address}
+                                                </th>
+                                                <td colspan="3">
+                                                    <p:inputText binding="#{adminEmployeeBean.employeeAddress1}" style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.address1}" id="address1"/>
+                                                    <p:messages for="address1" showDetail="true" showSummary="false" autoUpdate="true"/>
+                                                </td>
+                                            </tr>
+                                            <tr jsf:rendered="#{sessionBean.selectedBranch.usBranch}">
+                                                <th style="width: 15%">
+                                                    #{msgs.address2}
+                                                </th>
+                                                <td colspan="3">
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.address2}" id="address2"/>
+                                                </td>
+                                            </tr>
+                                            <tr jsf:rendered="#{sessionBean.selectedBranch.usBranch}">
+                                                <th style="width: 35%" colspan="1">
+                                                    #{msgs.cityStateZip}
+                                                </th>
+                                                <td colspan="3">
+                                                    <p:inputText rendered="#{sessionBean.selectedBranch.usBranch}" binding="#{adminEmployeeBean.employeeCity}" style="width: 60%;" value="#{adminEmployeeBean.selectedEmployee.city}" id="cityTxt"/>
+                                                    <p:inputText rendered="#{sessionBean.selectedBranch.usBranch}" style="width: 15%;" size="2" maxlength="2" value="#{adminEmployeeBean.selectedEmployee.state}"/>
+                                                    <p:inputText rendered="#{sessionBean.selectedBranch.usBranch}" style="width: 25%;" value="#{adminEmployeeBean.selectedEmployee.zip}"/>
+                                                    <p:messages for="cityTxt" showDetail="true" showSummary="false" autoUpdate="true"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 35%" colspan="#{sessionBean.selectedBranch.usBranch ? '2' : '1'}">
+                                                    #{msgs.phone}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeePhone}"/>
+                                                </td>
+                                                <th style="width: 15%">
+                                                    #{msgs.cell}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeCell}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 35%" colspan="#{sessionBean.selectedBranch.usBranch ? '2' : '1'}">
+                                                    #{msgs.altNum}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeePhone2}"/>
+                                                </td>
+                                                <th style="width: 15%">
+                                                    #{msgs.email}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeEmail}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 35%" colspan="2">
+                                                    #{msgs.altEmail}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeEmail2}"/>
+                                                </td>
+                                                <th style="width: 15%">
+                                                    #{msgs.overrideLogin}
+                                                </th>
+                                                <td>
+                                                    <p:inputText style="width: 100%;" value="#{adminEmployeeBean.selectedEmployee.employeeScanId}"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th style="width: 35%" colspan="2">
+                                                    #{msgs.terminated}
+                                                </th>
+                                                <td>
+                                                    <p:selectBooleanCheckbox value="#{adminEmployeeBean.selectedEmployee.deleted}"/>
+                                                </td>
+                                                <td colspan="2"/>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.save}" update=":AdminDashboardForm:EmployeeInfoModel :AdminDashboardFormTop:employeeTableDiv" action="#{adminEmployeeBean.save}">
+
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+            <ui:define name="bootstrap_plugins">
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/select2/select2.min.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/jquery-icheck/icheck.min.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/parsleyjs/dist/parsley.js"></script>
+                <script src="${facesContext.externalContext.requestContextPath}/bower_components/bootstrap-3-timepicker/js/bootstrap-timepicker.js"></script>
+            </ui:define>
+        </ui:composition>
+        
+    </h:body>
+</html>
+

@@ -1,0 +1,25 @@
+Test file: basictests.js
+# Resurrectio test
+PASS Find an element matching: .masthead
+PASS Find an element matching: xpath selector: //button[@type = "submit"]/span[.="Login"]
+URLhttp://www.patrolpro.com/client/admin/admin_dashboard.xhtml?windowId=d64
+PASS Find an element matching: a[href = '#sendLinkModal']
+PASS Find an element matching: xpath selector: //a[starts-with(@href, "admin_client.xhtml")]
+PASS Find an element matching: xpath selector: //td[contains(., 'BET Corp Office')]
+PASS Find an element matching: xpath selector: //input[@value = '1235 W. Street NE']
+PASS Find an element matching: xpath selector: //a[text()='Lithuanian']
+PASS Find an element matching: xpath selector: //p[text()='Maršrutai']
+PASS Find an element matching: xpath selector: //p[text()='Client Data']
+PASS Find an element matching: xpath selector: //a[text()='tests']
+PASS Find an element matching: xpath selector: //td[contains(., 'Apt 248 1001 Lake Carolyn Pkwy')]
+PASS Find an element matching: xpath selector: //input[@value = 'Apt 248 1001 Lake Carolyn Pkwy']
+PASS Find an element matching: xpath selector: //a[text()='Add Employee']
+PASS Find an element matching: xpath selector: //*[@id='AdminDashboardForm:firstName' and @value = '']
+Error: TypeError: 'undefined' is not a function (evaluating 'element.focus()')
+   phantomjs://webpage.evaluate() (line 4)
+   phantomjs://webpage.evaluate() (line 6)
+   phantomjs://webpage.evaluate() (line 6)
+PASS Find an element matching: xpath selector: //*[@id='AdminDashboardForm:firstName' and @value = '']
+PASS 15 tests executed in 14.325s, 15 passed, 0 failed, 0 dubious, 0 skipped.
+Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL file:///C:/Users/ira/AppData/Roaming/npm/node_modules/casperjs/bin/bootstrap.js. Domains, protocols and ports must match.
+

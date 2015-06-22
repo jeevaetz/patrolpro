@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="../templates/client/template.xhtml">
+            <ui:define name="javascript">   
+                <script type="text/javascript" src="${facesContext.externalContext.requestContextPath}/js/tracking.js"></script>
+                <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobubble/src/infobubble-compiled.js"/>
+                <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript" ></script>
+
+
+                <script type="text/javascript">
+                    function submit() {
+                        document.mapping.submit();
+                    }
+
+                    
+                    
+                    $(document).ready(setupBarCodeTimer());
+                    $(document).ready(setupBarCodeGPSTimer());
+                </script>
+
+                <style type="text/css">
+                    #rightSidebar {
+                        display: none;
+                    }
+
+                    #mainContent {
+                        width: 100% !important;
+                    }
+                    #page_position_content {
+                        width: 96% !important;
+                    }
+                </style>
+            </ui:define>
+            <ui:define name="body">   
+                <h:inputHidden id="clientId" value="#{barcodeBean.clientSessionBean.activeClient.clientId}"/>
+                <p:tabView onTabShow="$('#dialog-wait').dialog('close')" id="tabView" onTabChange="javascript:setupBarCodeTimer();setupBarCodeGPSTimer();" activeIndex="#{trackingBean.activeTab}">
+                    <p:ajax event="tabChange" listener="#{trackingBean.onTabChange}"/>
+                    <p:tab id="logsTab" title="Logs">  
+                        <ui:include src="access/access_logs.xhtml"/>
+                    </p:tab>
+                    <p:tab id="accessTab" title="Access Individuals"> 
+                        <ui:include src="access/access_individuals.xhtml"/>
+                    </p:tab>
+                </p:tabView>
+            </ui:define>   
+            <ui:define name="inner_right_column">
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

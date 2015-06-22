@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pass="http://java.sun.com/jsf/passthrough"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:body>
+        <ui:composition template="../../templates/client/admin/admin_template.xhtml">
+            <ui:param name="activeBean" value="#{adminClientBean}"/>
+
+            <ui:define name="body">   
+                <h:form id="AdminDashboardMiddle" enctype="multipart/form-data">
+                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.addClient}" update=":AdminDashboardForm:ClientInfoContent" action="#{adminClientBean.addNew}">
+                        <f:passThroughAttribute name="data-toggle" value="modal"/>
+                        <f:passThroughAttribute name="href" value="#ClientInfoModal"/>
+                    </p:commandLink>
+
+                    <div class="form-group" style="float: right;">
+                        <label class="parsley-error">
+                            <input type="checkbox" jsf:value="#{adminClientBean.showDeleted}">
+                                <p:ajax event="change" update=":AdminDashboardMiddle:clientTablePanel" listener="#{adminClientBean.selectBranch}" />
+                            </input>
+                            #{msgs.showDeletedClients}
+                        </label>
+                    </div>
+
+                    <p:remoteCommand name="clickTable" action="#{adminClientBean.loadClientInfo}" update=":AdminDashboardForm:ClientInfoContent" oncomplete="$('#ClientInfoModal').modal('show')">
+
+                    </p:remoteCommand>
+
+                    <div jsf:id="clientTablePanel">
+                        <table class="table table-striped table-bordered table-highlight" id="table-1">
+                            <tr>
+                                <th style="width: 30%;">
+                                    <h4>#{msgs.name}</h4>
+                                </th>
+                                <th style="width: 40%">
+                                    <h4>#{msgs.location}</h4>
+                                </th>
+                                <th style="width: 20%">
+                                    <h4>#{msgs.clientInformation}</h4>
+                                </th>
+                                <th style="width: 10%;">
+                                    <h4>#{msgs.actions}</h4>
+                                </th>
+                            </tr>
+                            <ui:repeat value="#{adminClientBean.clients}" var="client">
+                                <tr class="clickable-row">
+                                    <td onclick="javascript:clickTable([{name: 'selectedClientId', value: '#{client.clientId}'}]);">
+                                        #{client.clientName}
+                                    </td>
+                                    <td onclick="javascript:clickTable([{name: 'selectedClientId', value: '#{client.clientId}'}]);">
+                                        #{client.clientAddress} #{client.clientCity} #{client.clientState} #{client.clientZip}
+                                    </td>
+                                    <td>
+                                        <span jsf:rendered="#{client.assignedClientEquipmentIds.size() > 0}">
+                                            <p:graphicImage url="/client/images/android-phone-color.png"/><b>x #{client.assignedClientEquipmentIds.size()}</b>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="https://www.google.com/maps?q=#{client.clientAddressObj.latitude}+#{client.clientAddressObj.longitude}&amp;t=h&amp;iwloc=A" target="_blank" jsf:rendered="#{client.clientAddressObj.latitude != null and client.clientAddressObj.latitude gt 0}">
+                                            <p:graphicImage url="/client/images/map.png" alt="#{msgs.viewMap}"/>
+                                        </a>
+                                        <a href="${facesContext.externalContext.requestContextPath}/login.xhtml?clientId=#{client.clientId}&amp;companyId=#{sessionBean.companyId}&amp;branchId=#{sessionBean.selectedBranchId}&amp;userId=#{sessionBean.loggedInUser.userId}&amp;lang=#{sessionBean.locale.language}"  target="_blank">
+                                            <p:graphicImage url="/client/images/monitor.png" alt="#{msgs.loginAsClient}"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                    </div>
+                </h:form>
+
+                <h:form id="AdminDashboardForm" enctype="multipart/form-data">
+                    <div id="ClientInfoModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog" style="width: 50%;">
+                            <div jsf:id="ClientInfoContent">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">${msgs.clientInformation}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ul id="ClientDataTab" class="nav nav-tabs">
+                                            <li class="active">
+                                                <a href="#general" data-toggle="tab">#{msgs.general}</a>
+                                            </li>
+                                            <li jsf:rendered="#{adminClientBean.selectedClient.clientId != null}">
+                                                <a href="#contacts" data-toggle="tab">#{msgs.contacts}</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade active in" id="general">
+                                                <table class="table table-bordered" id="table-1">
+                                                    <tr>
+                                                        <th style="width: 25%;">
+                                                            #{msgs.clientName}
+                                                        </th>
+                                                        <th colspan="3">
+                                                            <p:inputText binding="#{adminClientBean.clientNameTxt}" id="clientName" style="width: 100%;" value="#{adminClientBean.selectedClient.clientName}" />
+                                                            <p:message for="clientName" showDetail="true" showSummary="false"/>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="width: 25%;">
+                                                            #{msgs.address}
+                                                        </th>
+                                                        <th colspan="3">
+                                                            <p:inputText binding="#{adminClientBean.clientAddress}" id="address" style="width: 100%;" value="#{adminClientBean.selectedClient.clientAddress}"/>
+                                                            <p:message for="address" showDetail="true" showSummary="false"/>
+
+                                                        </th>
+                                                    </tr>
+                                                    <tr jsf:rendered="#{sessionBean.selectedBranch.usBranch}">
+                                                        <th style="width: 25%;">
+                                                            #{msgs.address2}
+                                                        </th>
+                                                        <th colspan="3">
+                                                            <p:inputText binding="#{adminClientBean.clientAddress2}" id="address2" style="width: 100%;" value="#{adminClientBean.selectedClient.clientAddress2}"/>
+                                                        </th>
+                                                    </tr>
+                                                    <tr jsf:rendered="#{sessionBean.selectedBranch.usBranch}">
+                                                        <th style="width: 25%;">
+                                                            #{msgs.cityStateZip}
+                                                        </th>
+                                                        <th colspan="3">
+                                                            <p:inputText rendered="#{sessionBean.selectedBranch.usBranch}" binding="#{adminClientBean.clientCity}" id="cityTxt" style="width: 60%;" value="#{adminClientBean.selectedClient.clientCity}"/>
+                                                            <p:inputText rendered="#{sessionBean.selectedBranch.usBranch}" binding="#{adminClientBean.clientState}" id="state" size="2" maxlength="2" style="width: 15%;" value="#{adminClientBean.selectedClient.clientState}"/>
+                                                            <p:inputText rendered="#{sessionBean.selectedBranch.usBranch}" binding="#{adminClientBean.clientZip}" id="zip" style="width: 25%" value="#{adminClientBean.selectedClient.clientZip}"/>
+                                                            <p:message for="cityTxt" showDetail="true" showSummary="false"/>
+                                                            <p:message for="state" showDetail="true" showSummary="false"/>
+                                                            <p:message for="zip" showDetail="true" showSummary="false"/>
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="width: 25%;">
+                                                            #{msgs.phone}
+                                                        </th>
+                                                        <td style="width: 25%">
+                                                            <p:inputText binding="#{adminClientBean.clientPhone}" style="width: 100%;" id="phone" value="#{adminClientBean.selectedClient.clientPhone}"/>
+                                                            <p:message for="phone" showDetail="true" showSummary="false"/>
+                                                        </td>
+                                                        <th style="width: 25%;">
+                                                            #{msgs.phone2}
+                                                        </th>
+                                                        <td style="width: 25%">
+                                                            <p:inputText style="width: 100%;" value="#{adminClientBean.selectedClient.clientPhone2}"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th style="width: 25%;">
+                                                            #{msgs.userName}
+                                                        </th>
+                                                        <td style="width: 25%">
+                                                            <p:inputText style="width: 100%;" value="#{adminClientBean.selectedClient.cUserName}"/>
+                                                        </td>
+                                                        <th style="width: 25%;">
+                                                            #{msgs.password}
+                                                        </th>
+                                                        <td style="width: 25%">
+                                                            <p:inputText style="width: 100%;" value="#{adminClientBean.selectedClient.cPassword}"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            #{msgs.reportTime}
+                                                        </th>
+                                                        <td>
+                                                            
+                                                        </td>
+                                                        <th style="width: 25%">
+                                                            <h:outputLabel value="#{msgs.clientIsDeleted}"/>
+                                                        </th>
+                                                        <td>
+                                                            <p:selectBooleanCheckbox  value="#{adminClientBean.selectedClient.deleted}" rendered="#{adminClientBean.selectedClient != null}"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            #{msgs.assignedRoutes}
+                                                        </th>
+                                                        <td>
+                                                            <ui:repeat value="#{adminClientBean.selectedClientroutes}" var="route" varStatus="loopVar">
+                                                                #{route.routeName}#{loopVar.index lt adminClientBean.selectedClientroutes.size() - 1 ? ',' : ''}
+                                                            </ui:repeat>
+                                                        </td>
+                                                        <th>
+                                                            #{msgs.canAdministerRoutes}
+                                                        </th>
+                                                        <td>
+                                                            <p:selectBooleanCheckbox  value="#{adminClientBean.selectedClient.logIntoRoute}"/>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <div class="tab-pane fade" id="contacts">
+                                                <div jsf:id="contacts">
+                                                    <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.addContact}" update=":ContactForm:ContactModal" action="#{adminClientBean.addContact}">
+
+                                                    </p:commandLink>
+                                                    <div class="row">
+                                                        <ui:repeat value="#{adminClientBean.clientContacts}" var="contact" varStatus="rowNumber" rendered="#{adminClientBean.selectedClient != null and adminClientBean.clientContacts != null}">
+                                                            <div class="col-md-6 portlet portlet-boxed" style="min-width: 440px;">
+                                                                <div class="portlet-body">
+                                                                    <h4 class="content-title">
+                                                                        #{contact.clientContactFirstName} #{contact.clientContactLastName}
+                                                                        <span style="float: right; margin-top: -10px;">
+                                                                            <p:commandLink style="margin-right: 10px;" update=":ContactForm:ContactModal" action="#{adminClientBean.setSelectedContact(contact)}">
+                                                                                <img src="/client/images/user_edit.png"/>
+                                                                            </p:commandLink>
+                                                                            <p:commandLink update=":ConfirmDeleteContact:ConfirmDeleteModal" action="#{adminClientBean.setEditContact(contact)}" oncomplete="$('#ContactDeleteModal').modal('show');">
+                                                                                <img src="/client/images/cancel.png"/>
+                                                                            </p:commandLink>
+                                                                        </span>
+                                                                    </h4>
+                                                                    <table>
+                                                                        <tr>
+                                                                            <th style="width: 20%">
+                                                                                #{msgs.phone}
+                                                                            </th>
+                                                                            <td style="width: 40%;">
+                                                                                <a href="tel:#{contact.clientContactPhone}">#{contact.clientContactPhone}</a>
+                                                                            </td>
+                                                                            <th style="width: 40%;">
+                                                                                #{msgs.notifyOnGuardCheckin}
+                                                                            </th>
+                                                                            <td style="width:17px;">
+                                                                                <p:graphicImage url="/images/checkbox16x16.png" rendered="#{contact.clientContactEmailOnLogin}"/>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="width: 20%">
+                                                                                #{msgs.email}
+                                                                            </th>
+                                                                            <td>
+                                                                                <a href="mailto:#{contact.clientContactEmail}">#{contact.clientContactEmail}</a>
+                                                                            </td>
+                                                                            <th>
+                                                                                #{msgs.notifyOnIncident}
+                                                                            </th>
+                                                                            <td>
+                                                                                <p:graphicImage url="/images/checkbox16x16.png" rendered="#{contact.clientContactEmailOnIncident}"/>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>
+                                                                                #{msgs.address}
+                                                                            </th>
+                                                                            <td>
+                                                                                #{contact.clientContactAddress}
+                                                                            </td>
+                                                                            <th>
+                                                                                #{msgs.emailODR}
+                                                                            </th>
+                                                                            <td>
+                                                                                <p:graphicImage url="/images/checkbox16x16.png" rendered="#{contact.clientContactIncludeDailyOdr}"/>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>
+                                                                                
+                                                                            </th>
+                                                                            <td>
+                                                                                #{contact.clientContactCity}, #{contact.clientContactState} #{contact.clientContactZip}
+                                                                            </td>
+                                                                            <th>
+                                                                                #{msgs.sendTrackingReport}
+                                                                            </th>
+                                                                            <td>
+                                                                                <p:graphicImage url="/images/checkbox16x16.png" rendered="#{contact.clientContactIncludeDailyTracking}"/>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </ui:repeat>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.save}" update=":AdminDashboardMiddle:clientTablePanel :AdminDashboardForm:ClientInfoContent" action="#{adminClientBean.save}">
+
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </h:form>
+
+                <h:form id="ContactForm">
+                    <div id="ContactModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog" style="width: 45%;">
+                            <div jsf:id="ContactModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.addContact}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ui:include src="/client/facelets/contact_info.xhtml">
+                                            <ui:param name="contact" value="#{adminClientBean.editContact}"/>
+                                        </ui:include>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink styleClass="btn btn-secondary demo-element" value="#{msgs.save}" update=":AdminDashboardForm:contacts" action="#{adminClientBean.saveClientContact()}">
+
+                                        </p:commandLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                
+                <h:form id="ConfirmDeleteContact">
+                    <div id="ContactDeleteModal" class="modal modal-styled fade in" aria-hidden="false" style="display: none;">
+                        <div class="modal-dialog">
+                            <div jsf:id="ConfirmDeleteModal">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                                        <h3 class="modal-title">#{msgs.deleteContact}</h3>
+                                    </div>
+                                    <div class="modal-body">
+                                        #{msgs.confirmDeleteContact} #{adminClientBean.editContact.clientContactFirstName} #{adminClientBean.editContact.clientContactLastName}?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p:commandLink styleClass="btn btn-secondary demo-element" style="float: right;" value="#{msgs.yes}" update=":AdminDashboardForm:contacts" action="#{adminClientBean.deleteClientContact()}"/>
+                                        <p:commandLink styleClass="btn btn-secondary demo-element" style="float: right;" value="#{msgs.no}" onclick="$('#ContactDeleteModal').modal('hide');"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
+

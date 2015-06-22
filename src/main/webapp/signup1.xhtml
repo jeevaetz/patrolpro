@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <ui:composition template="/templates/template.xhtml">
+            <ui:define name="title"> 
+                Signup
+            </ui:define>
+            <ui:define name="javascript"> 
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $('#u1506').css('display', 'none');
+                    });
+                </script>
+            </ui:define>
+            <ui:define name="body">     
+                <h:form id="loginForm">
+                    <p:messages autoUpdate="true" showSummary="true" globalOnly="true"/>
+                    <p:panelGrid styleClass="signupPanel" id="signupPanel">
+                        <p:row>
+                            <p:column style="width: 30%">
+                                Company Name
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.managementClient.management_client_name}" id="companyName"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:messages for="companyName" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Company Address
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.managementClient.management_client_address}" id="companyAddress"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:messages for="companyAddress" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                City, State Zip
+                            </p:column>
+                            <p:column>
+                                <p:inputText style="width: 55%" value="#{signupBean.managementClient.management_client_city}" id="companyCity"/>
+                                <p:inputText style="width: 15%" value="#{signupBean.managementClient.management_client_state}" id="companyState"/>
+                                <p:inputText style="width: 18%" value="#{signupBean.managementClient.management_client_zip}" id="companyZip"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:messages for="companyCity" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Billing Phone
+                            </p:column>
+                            <p:column>
+                                <p:inputMask id="phone" styleClass="fullTxt" mask="(999)999-9999" placeHolder="_" value="#{signupBean.managementClient.management_client_phone}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:messages for="phone" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Billing Email
+                            </p:column>
+                            <p:column>
+                                <p:inputText styleClass="fullTxt" value="#{signupBean.managementClient.management_billing_email1}" id="email"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:messages for="email" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                Initial # of devices
+                            </p:column>
+                            <p:column>
+                                <p:inputMask id="deviceNum" styleClass="fullTxt" mask="9?999" maxlength="3" placeHolder="" value="#{signupBean.numberOfDevices}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                            </p:column>
+                            <p:column>
+                                <p:messages for="deviceNum" showDetail="true" showSummary="false" autoUpdate="true"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <p:commandButton style="float: right;" value="Next" action="#{signupBean.nextScreen}"/>
+                </h:form>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+
+</html>
+

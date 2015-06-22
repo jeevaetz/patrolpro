@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <h:form id="EquipForm">
+        <p:dialog id="equipmentWindow" modal="false" position="right top" visible="false" styleClass="equipmentDiag" width="240" height="300">
+            <p:tabView id="equipmentView" dynamic="true" cache="true" var="device" value="#{equipmentWindowBean.clientEquipments}">
+                <p:tab id="messagingView" title="#{device.nickname}" closable="true">
+                    <p:scrollPanel>
+                        <p:outputPanel>
+
+                        </p:outputPanel>
+                    </p:scrollPanel>
+
+                    <p:inputTextarea rows="4" cols="18" autoResize="false" value="#{equipmentWindowBean.messageText}"/> 
+                    <p:commandButton value="Send" action="#{equipmentWindowBean.sendText(device)}"/>
+                </p:tab>
+            </p:tabView>
+        </p:dialog>
+    </h:form>
+</ui:composition>
+

@@ -1,0 +1,152 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pass="http://java.sun.com/jsf/passthrough"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+
+        <h:form id="MapForm">
+            <div jsf:id="mapPositioningPanel"> 
+                <p:gmap id="barcodePositioningMap" widgetVar="barcodePositioningMap" center="#{barcodeBean.latitude},#{barcodeBean.longitude}" zoom="18" type="HYBRID" style="height:400px" model="#{barcodeBean.polylineModel}">  
+                    <p:ajax event="stateChange" listener="#{barcodeBean.onStateChange}" />
+                    <p:ajax event="markerDrag" listener="#{barcodeBean.onMarkerDrag}" update=":BarcodeListingForm:barcodeTable"/>
+                </p:gmap>  
+            </div>
+        </h:form>
+
+        <h:form id="AddBarcodeForm">
+            <p:commandButton value="#{msgs.addBarcode}" rendered="#{clientSessionBean.isLoggedInAsAdmin}" style="float: right;" action="#{barcodeBean.addWayPoint}" update=":BarcodeEditForm:barcodeDiag" oncomplete="PF('barcodeDiag').show();">
+            </p:commandButton>
+        </h:form>
+
+        <h:form id="BarcodeListingForm">
+            <p:dataTable id="barcodeTable" var="waypoint" value="#{barcodeBean.wayPoints}" paginator="true" rows="40" emptyMessage="#{msgs.noDataFound}"
+                         selectionMode="single" rowKey="#{waypoint.clientWaypointId}" selection="#{barcodeBean.selectedWayPoint}" >
+                <p:ajax event="rowSelect" update=":BarcodeEditForm:barcodeDiag"
+                        oncomplete="PF('barcodeDiag').show()"/>
+
+                <p:column headerText="#{msgs.tagName}" 
+                          sortBy="#{waypoint.waypointName}" 
+                          id="name" 
+                          filterMatchMode="contains"
+                          style="width: 135px;">
+                    #{waypoint.waypointName}
+                </p:column>
+                <p:column headerText="#{msgs.tagNum}" 
+                          id="data" 
+                          sortBy="#{waypoint.waypointData}" 
+                          style="width: 50px;">
+                    #{waypoint.waypointData}
+                </p:column>
+                <p:column headerText="#{msgs.icon}" 
+                          id="icon" 
+                          sortBy="#{waypoint.iconURL}" 
+                          style="width: 50px;">
+                    <p:graphicImage value="#{waypoint.iconURL}"/>
+                </p:column>
+                <p:column headerText="#{msgs.dateAdded}" 
+                          id="date" 
+                          sortBy="#{waypoint.dateAdded}" 
+                          style="width: 70px;">
+                    <h:outputText value="#{waypoint.dateAdded}" styleClass="table_cell">
+                        <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                    </h:outputText> 
+                </p:column>
+                <p:column headerText="#{msgs.actions}" 
+                          id="actions"
+                          style="width: 50px;">
+                    <p:commandLink rendered="#{clientSessionBean.isLoggedInAsAdmin and !clientSessionBean.hasMultipleClients()}" immediate="true" ajax="true" action="#{barcodeBean.setItemToDelete(waypoint.clientWaypointId)}" oncomplete="PF('confirmBarcodeDeleteDiag').show();" update=":DeleteBarcodeForm:confirmBarcodeDeleteDiag">
+                        <p:graphicImage url="/design/cancel.png"/>
+                    </p:commandLink>
+                    <p:commandLink ajax="false" action="#{barcodeBean.setLatLng(waypoint.clientWaypointId)}" update=":MapForm:mapPositioningPanel">
+                        <p:graphicImage url="/design/map_search.png" />
+                    </p:commandLink>
+                    <p:commandLink immediate="true" action="#{barcodeBean.handleLogView(waypoint)}" oncomplete="PF('barcodeLogDiag').show()" update=":BarcodeLogForm:barcodeLogTable">
+                        <p:graphicImage url="/design/log.png"/>
+                    </p:commandLink>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <h:form id="DeleteBarcodeForm">
+            <p:dialog id="confirmBarcodeDeleteDiag" widgetVar="confirmBarcodeDeleteDiag" width="250" showEffect="puff" hideEffect="puff" header="#{msgs.confirmDelete}">
+                <h:inputHidden value="#{barcodeBean.itemToDelete}"/>
+                <p:outputPanel id="barcodeDeleteText">#{msgs.doYouWantToMark} #{barcodeBean.selectedWayPoint.waypointName} #{msgs.asInactive}</p:outputPanel>
+                <br/><br/>
+                <p:commandButton value="#{msgs.cancel}" onclick="PF('confirmBarcodeDeleteDiag').hide();" style="float: left;"/>
+                <p:commandButton value="#{msgs.delete}" ajax="false" immediate="true" action="#{barcodeBean.deleteWayPoint()}" update=":BarcodeListingForm:barcodeTable" oncomplete="PF('confirmBarcodeDeleteDiag').hide();" style="float: right;"/>
+            </p:dialog> 
+        </h:form>
+
+        <h:form id="BarcodeEditForm">
+            <p:dialog id="barcodeDiag" modal="true" widgetVar="barcodeDiag" width="450" showEffect="puff" hideEffect="puff" header="#{msgs.barcodeInformation}">
+                <p:panelGrid id="display" styleClass="barcodeTable">
+                    <p:row>
+                        <p:column>
+                            #{msgs.tagLocation}
+                            <p:inputText id="wayPointName" value="#{barcodeBean.selectedWayPoint.waypointName}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            #{msgs.tagNum}
+                            <p:inputText id="wayPointData" value="#{barcodeBean.selectedWayPoint.waypointData}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="display: none;">
+                            #{msgs.dateAdded}
+                            <p:calendar id="dateAdded" showOn="button" value="#{barcodeBean.selectedWayPoint.dateAdded}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid  >
+                <p:commandButton value="#{msgs.close}" onclick="PF('barcodeDiag').hide();" style="float: left;"/>
+                <p:commandButton ajax="false" process="wayPointName" partialSubmit="true" value="#{msgs.save}" actionListener="#{barcodeBean.save}" update=":BarcodeListingForm:barcodeTable" oncomplete="PF('barcodeDiag').hide();" style="float: right;"/>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="BarcodeLogForm">
+            <p:dialog id="barcodeLogDiag" widgetVar="barcodeLogDiag" width="550" showEffect="puff" hideEffect="puff" header="#{msgs.barcodeLog}">
+                <p:panelGrid id="barcodeLogData">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="#{msgs.startDate}:" />  
+                            <p:calendar id="startDate" showOn="button" value="#{barcodeBean.startDate}">
+                                <p:ajax event="dateSelect" listener="#{barcodeBean.handleStartDateSelect}" update="barcodeLogTable" />
+                            </p:calendar>   
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{msgs.endDate}:" />  
+                            <p:calendar id="endDate" showOn="button" value="#{barcodeBean.endDate}">
+                                <p:ajax event="dateSelect" listener="#{barcodeBean.handleEndDateSelect}" update="barcodeLogTable" />
+                            </p:calendar>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:dataTable id="barcodeLogTable" var="waypointScan" value="#{barcodeBean.wayPointScans}" paginator="true" rows="10"
+                             selectionMode="single" rowKey="#{waypointScan.clientWaypointScanId}" scrollHeight="150" emptyMessage="#{msgs.noDataFound}">
+                    <p:column headerText="#{msgs.users}" 
+                              sortBy="#{waypointScan.userObj.getEmployeeFullName()}" 
+                              id="username" 
+                              filterMatchMode="contains"
+                              style="width: 135px;">
+                        #{waypointScan.userObj.getEmployeeFullName()}
+                    </p:column>    
+                    <p:column headerText="#{msgs.dateScanned}" 
+                              sortBy="#{waypointScan.dateScanned}" 
+                              id="name" 
+                              filterMatchMode="contains"
+                              style="width: 135px;">
+                        <h:outputText value="#{waypointScan.dateScanned}" styleClass="table_cell">
+                            <f:convertDateTime timeZone="#{clientSessionBean.getGMTOffset()}" pattern="#{msgs.shortDateHourStyle}" />
+                        </h:outputText> 
+                    </p:column>
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+
